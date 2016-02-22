@@ -43,7 +43,7 @@ class cSettings {
             ], 0
         ),
         "theme": ([
-            "Default", "Fanart", "Grids'n'Posters"
+            "Default", "Fanart", "Grids'n'Posters", "iTunes"
             ], 0
         ),
         "themeExternalOverride": ([

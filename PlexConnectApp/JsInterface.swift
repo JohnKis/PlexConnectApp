@@ -46,6 +46,15 @@ class cJsInterface: NSObject, jsInterfaceProtocol {
         return TVMLTemplate
     }
     
+    // XMLConverter
+    func getView(view: String, id: String, path: String, useXMLConverter: Bool) -> String {
+        if (useXMLConverter){
+            return self.getView(view, id, path)
+        }
+        
+        return ""
+    }
+    
     // Settings
     func toggleSetting(setting: String, view: String) -> String {
         settings.toggleSetting(setting)
