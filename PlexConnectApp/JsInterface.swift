@@ -11,6 +11,7 @@ import TVMLKit
 
 
 
+
 @objc protocol jsInterfaceProtocol : JSExport {
     func log(message: String) -> Void
     
@@ -49,7 +50,7 @@ class cJsInterface: NSObject, jsInterfaceProtocol {
     // XMLConverter
     func getView(view: String, id: String, path: String, useXMLConverter: Bool) -> String {
         if (useXMLConverter){
-            return self.getView(view, id, path)
+            return self.getView(view, id: id, path: path)
         }
         
         return ""

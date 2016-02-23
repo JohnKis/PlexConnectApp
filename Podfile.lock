@@ -1,0 +1,19 @@
+PODS:
+  - GRMustache.swift (1.0.0)
+
+DEPENDENCIES:
+  - GRMustache.swift (from `https://github.com/groue/GRMustache.swift`)
+
+EXTERNAL SOURCES:
+  GRMustache.swift:
+    :git: https://github.com/groue/GRMustache.swift
+
+CHECKOUT OPTIONS:
+  GRMustache.swift:
+    :commit: 4398ad4ee84b6b47be92c03535e2bc347ddc5156
+    :git: https://github.com/groue/GRMustache.swift
+
+SPEC CHECKSUMS:
+  GRMustache.swift: 40991f64a210756df6a0bd19f54283e41c176483
+
+COCOAPODS: 0.39.0

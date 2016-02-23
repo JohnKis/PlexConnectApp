@@ -1,0 +1,6 @@
+framework module Pods_PlexConnectApp {
+  umbrella header "Pods-PlexConnectApp-umbrella.h"
+
+  export *
+  module * { export * }
+}
