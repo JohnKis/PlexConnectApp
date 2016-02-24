@@ -29,27 +29,35 @@ modalDialogPresenter: function(xml) {
     pmsId: id
     pmsPath: path
  */
-setupViewDocument: function(view, pmsId, pmsPath) {
+setupViewDocument: function(view, pmsId, pmsPath, useMustache) {
   console.log("load");
+	
+	var docString,
+		parser,
+		doc;
+	
+	if (useMustache)
+		docString = swiftInterface.getViewIdPathUseMustache(view, pmsId, pmsPath, useMustache)
+	else
+		docString = swiftInterface.getViewIdPath(view, pmsId, pmsPath);
+	
+	parser = new DOMParser();
+	doc = parser.parseFromString(docString, "application/xml");
   
-  var docString = swiftInterface.getViewIdPath(view, pmsId, pmsPath);
-  var parser = new DOMParser();
-  var doc = parser.parseFromString(docString, "application/xml");
-  
-  // events: https://developer.apple.com/library/tvos/documentation/TVMLKit/Reference/TVViewElement_Ref/index.html#//apple_ref/c/tdef/TVElementEventType
-  doc.addEventListener("select", Presenter.onSelect.bind(Presenter));
-  doc.addEventListener("holdselect", Presenter.onHoldSelect.bind(Presenter));
-  doc.addEventListener("play", Presenter.onPlay.bind(Presenter));
-  doc.addEventListener("highlight", Presenter.onHighlight.bind(Presenter));
-  doc.addEventListener("load", Presenter.onLoad.bind(Presenter));  // setup search for char entered
-  
-  return doc
+	// events: https://developer.apple.com/library/tvos/documentation/TVMLKit/Reference/TVViewElement_Ref/index.html#//apple_ref/c/tdef/TVElementEventType
+	doc.addEventListener("select", Presenter.onSelect.bind(Presenter));
+	doc.addEventListener("holdselect", Presenter.onHoldSelect.bind(Presenter));
+	doc.addEventListener("play", Presenter.onPlay.bind(Presenter));
+	doc.addEventListener("highlight", Presenter.onHighlight.bind(Presenter));
+	doc.addEventListener("load", Presenter.onLoad.bind(Presenter));  // setup search for char entered
+	
+	return doc
 },
 
-load: function(view, pmsId, pmsPath) {
+load: function(view, pmsId, pmsPath, useMustache) {
   var loadingDoc = createSpinner("");
   loadingDoc.addEventListener("load", function() {
-      var doc = Presenter.setupViewDocument(view, pmsId, pmsPath);
+      var doc = Presenter.setupViewDocument(view, pmsId, pmsPath, useMustache);
       navigationDocument.replaceDocument(doc, loadingDoc);
   });
   navigationDocument.pushDocument(loadingDoc);

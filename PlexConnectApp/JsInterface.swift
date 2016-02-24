@@ -17,6 +17,7 @@ import TVMLKit
     
     // XMLConverter
     func getView(view: String, id: String, path: String) -> String
+	func getView(view: String, id: String, path: String, useMustache: Bool) -> String
     
     // Settings
     func toggleSetting(setting: String, view: String) -> String
@@ -48,12 +49,16 @@ class cJsInterface: NSObject, jsInterfaceProtocol {
     }
     
     // XMLConverter
-    func getView(view: String, id: String, path: String, useXMLConverter: Bool) -> String {
-        if (useXMLConverter){
+    func getView(view: String, id: String, path: String, useMustache: Bool) -> String {
+		var template = "";
+		
+        if (!useMustache){
             return self.getView(view, id: id, path: path)
         }
-        
-        return ""
+		
+		template = readTVMLTemplate(view, theme: settings.getSetting("theme"))
+		
+        return template
     }
     
     // Settings
