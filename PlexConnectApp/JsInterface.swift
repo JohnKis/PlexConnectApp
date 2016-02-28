@@ -8,8 +8,8 @@
 
 import Foundation
 import TVMLKit
-
-
+import Mustache
+import Alamofire
 
 
 @objc protocol jsInterfaceProtocol : JSExport {
@@ -17,7 +17,7 @@ import TVMLKit
     
     // XMLConverter
     func getView(view: String, id: String, path: String) -> String
-	func getView(view: String, id: String, path: String, useMustache: Bool) -> String
+	func getView(view: String, id: String, path: String, useMustache: Bool, completion: JSValue) -> Void
     
     // Settings
     func toggleSetting(setting: String, view: String) -> String
@@ -48,19 +48,34 @@ class cJsInterface: NSObject, jsInterfaceProtocol {
         return TVMLTemplate
     }
     
-    // XMLConverter
-    func getView(view: String, id: String, path: String, useMustache: Bool) -> String {
-		var template = "";
+    // Mustache
+	// TODO: Exception handling
+    func getView(view: String, id: String, path: String, useMustache: Bool, completion: JSValue) -> Void {
+		var tvmlTemplate = "",
+			headers = ["Accept": "application/json"],
+			completionWrapper = JSContext.currentContext().objectForKeyedSubscript("setTimeout")
 		
-        if (!useMustache){
-            return self.getView(view, id: id, path: path)
-        }
+		let templateStr = readTVMLTemplate(view, theme: settings.getSetting("theme"))
 		
-		template = readTVMLTemplate(view, theme: settings.getSetting("theme"))
-		
-        return template
+		Alamofire.request(.GET, getPmsUrl("", pmsId: id, pmsPath: path), headers: headers)
+			.responseJSON { response in
+				if let JSON = response.result.value {
+//					var jsonArray = JSON as! Dictionary<String, AnyObject>
+//					
+//					if jsonArray.contains("thumb") {
+//						jsonArray.obje thumb = getPmsUrl("", pmsId: id, pmsPath: jsonArray.thumb)
+//					}
+					
+					do {
+						let template = try Template(string: templateStr);
+						tvmlTemplate = try template.render(Box(JSON as? NSObject))
+					} catch _ {}
+					
+					completionWrapper.callWithArguments([completion, 0, tvmlTemplate])
+				}
+			}
     }
-    
+	
     // Settings
     func toggleSetting(setting: String, view: String) -> String {
         settings.toggleSetting(setting)

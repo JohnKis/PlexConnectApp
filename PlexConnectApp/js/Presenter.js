@@ -54,14 +54,32 @@ setupViewDocument: function(view, pmsId, pmsPath, useMustache) {
 	return doc
 },
 
-load: function(view, pmsId, pmsPath, useMustache) {
-  var loadingDoc = createSpinner("");
-  loadingDoc.addEventListener("load", function() {
-      var doc = Presenter.setupViewDocument(view, pmsId, pmsPath, useMustache);
-      navigationDocument.replaceDocument(doc, loadingDoc);
-  });
-  navigationDocument.pushDocument(loadingDoc);
-  //navigationDocument.dismissModal();  // just in case?!  // todo: if (isModal)...?
+load: function(view, pmsId, pmsPath, title, useMustache) {
+	if (typeof title != "string")
+		title = "";
+	
+	if (useMustache){
+		var loadingDoc = createSpinner(title),
+			parser = new DOMParser();
+		
+		navigationDocument.pushDocument(loadingDoc)
+		
+		swiftInterface.getViewIdPathUseMustacheCompletion(view, pmsId, pmsPath, true, function(template){
+			var doc = parser.parseFromString(template, "application/xml");
+			navigationDocument.replaceDocument(doc, loadingDoc);
+		})
+		
+		
+		return;
+	}
+	
+	var loadingDoc = createSpinner("");
+	loadingDoc.addEventListener("load", function() {
+		var doc = Presenter.setupViewDocument(view, pmsId, pmsPath, useMustache);
+		navigationDocument.replaceDocument(doc, loadingDoc);
+	});
+	navigationDocument.pushDocument(loadingDoc);
+	//navigationDocument.dismissModal();  // just in case?!  // todo: if (isModal)...?
 },
 
 loadAndSwap: function(view, pmsId, pmsPath) {

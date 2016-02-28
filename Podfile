@@ -5,5 +5,6 @@ use_frameworks!
 
 target 'PlexConnectApp' do
 pod 'GRMustache.swift', git: 'https://github.com/groue/GRMustache.swift'
+pod 'Alamofire', '~> 3.0'
 end
 
