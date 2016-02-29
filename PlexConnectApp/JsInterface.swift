@@ -36,6 +36,8 @@ import SwiftyJSON
 
 
 class cJsInterface: NSObject, jsInterfaceProtocol {
+	var jsonConverter : cJSONConverter?
+	
     func log(message: String) -> Void {
         print("JS: \(message)")
     }
@@ -49,73 +51,18 @@ class cJsInterface: NSObject, jsInterfaceProtocol {
         return TVMLTemplate
     }
     
-    // Mustache
-	// TODO: Exception handling
+    // JSONConverter
     func getView(view: String, id: String, path: String, useMustache: Bool, completion: JSValue) -> Void {
-		var tvmlTemplate = "",
-			headers = ["Accept": "application/json"],
-			completionWrapper = JSContext.currentContext().objectForKeyedSubscript("setTimeout")
+		let completionWrapper = JSContext.currentContext().objectForKeyedSubscript("setTimeout")
 		
-		let templateStr = readTVMLTemplate(view, theme: settings.getSetting("theme"))
+		if self.jsonConverter == nil {
+			self.jsonConverter = cJSONConverter()
+		}
 		
-        // TODO: Nested requests
-		Alamofire.request(.GET, getPmsUrl("", pmsId: id, pmsPath: path), headers: headers)
-			.responseJSON { response in
-				if let json = response.result.value {
-					var jsonArray = JSON(json)
-
-                    // TODO: Optimise this
-					for (key,value) in jsonArray {
-						if key == "thumb" {
-							jsonArray[key].string = getPmsUrl("", pmsId: id, pmsPath: value.string!)
-						}
-						
-						if key == "_children" {
-                            for (index,child) in jsonArray[key].array!.enumerate() {
-                                for (childkey, childvalue):(String, JSON) in child {
-                                    if childkey == "thumb" {
-                                        jsonArray[key][index][childkey].string = getPmsUrl("", pmsId: id, pmsPath: childvalue.string!)
-                                    }
-                                }
-							}
-						}
-					}
-					
-                    print("Paths")
-                    print(path.stringByReplacingOccurrencesOfString("/children", withString: ""))
-                    print(path)
-                    
-                    // TODO: Make this more explicit
-                    if path.stringByReplacingOccurrencesOfString("/children", withString: "") != path {
-                        Alamofire.request(.GET, getPmsUrl("", pmsId: id, pmsPath: path.stringByReplacingOccurrencesOfString("/children", withString: "")), headers: headers)
-                            .responseJSON { response in
-                                if let parentJson = response.result.value {
-                                    jsonArray["_parent"] = JSON(parentJson)
-                                    
-                                    
-                                    do {
-                                        let template = try Template(string: templateStr);
-                                        tvmlTemplate = try template.render(Box(jsonArray.object as? NSObject))
-                                    } catch _ {
-                                        print("Mustache parse error")
-                                    }
-                                    
-                                    completionWrapper.callWithArguments([completion, 0, tvmlTemplate])
-                                }
-                            }
-                    } else {
-                        do {
-                            let template = try Template(string: templateStr);
-                            tvmlTemplate = try template.render(Box(jsonArray.object as? NSObject))
-                        } catch _ {
-                            print("Mustache parse error")
-                        }
-                        
-                        completionWrapper.callWithArguments([completion, 0, tvmlTemplate])
-                    }
-				}
-			}
-    }
+		self.jsonConverter!.render(view, pmsId: id, pmsPath: path, completion: { template in
+			completionWrapper.callWithArguments([completion, 0, template])
+		})
+	}
 	
     // Settings
     func toggleSetting(setting: String, view: String) -> String {
