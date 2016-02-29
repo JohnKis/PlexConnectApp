@@ -58,6 +58,7 @@ class cJsInterface: NSObject, jsInterfaceProtocol {
 		
 		let templateStr = readTVMLTemplate(view, theme: settings.getSetting("theme"))
 		
+        // TODO: Nested requests
 		Alamofire.request(.GET, getPmsUrl("", pmsId: id, pmsPath: path), headers: headers)
 			.responseJSON { response in
 				if let json = response.result.value {
@@ -70,7 +71,6 @@ class cJsInterface: NSObject, jsInterfaceProtocol {
 						}
 						
 						if key == "_children" {
-							print(jsonArray[key])
                             for (index,child) in jsonArray[key].array!.enumerate() {
                                 for (childkey, childvalue):(String, JSON) in child {
                                     if childkey == "thumb" {
@@ -81,14 +81,38 @@ class cJsInterface: NSObject, jsInterfaceProtocol {
 						}
 					}
 					
-					do {
-						let template = try Template(string: templateStr);
-						tvmlTemplate = try template.render(Box(jsonArray.object as? NSObject))
-					} catch _ {
-						print("Mustache parse error")
-					}
-					
-					completionWrapper.callWithArguments([completion, 0, tvmlTemplate])
+                    print("Paths")
+                    print(path.stringByReplacingOccurrencesOfString("/children", withString: ""))
+                    print(path)
+                    
+                    // TODO: Make this more explicit
+                    if path.stringByReplacingOccurrencesOfString("/children", withString: "") != path {
+                        Alamofire.request(.GET, getPmsUrl("", pmsId: id, pmsPath: path.stringByReplacingOccurrencesOfString("/children", withString: "")), headers: headers)
+                            .responseJSON { response in
+                                if let parentJson = response.result.value {
+                                    jsonArray["_parent"] = JSON(parentJson)
+                                    
+                                    
+                                    do {
+                                        let template = try Template(string: templateStr);
+                                        tvmlTemplate = try template.render(Box(jsonArray.object as? NSObject))
+                                    } catch _ {
+                                        print("Mustache parse error")
+                                    }
+                                    
+                                    completionWrapper.callWithArguments([completion, 0, tvmlTemplate])
+                                }
+                            }
+                    } else {
+                        do {
+                            let template = try Template(string: templateStr);
+                            tvmlTemplate = try template.render(Box(jsonArray.object as? NSObject))
+                        } catch _ {
+                            print("Mustache parse error")
+                        }
+                        
+                        completionWrapper.callWithArguments([completion, 0, tvmlTemplate])
+                    }
 				}
 			}
     }

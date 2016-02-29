@@ -8,7 +8,7 @@
 					<header>
 						<title>Studio</title>
 					</header>
-					<text>TODO</text>
+                    <text>{{ _parent._children.first.studio }}</text>
 				</info>
 				<info>
 					<header>
