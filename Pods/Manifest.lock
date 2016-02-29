@@ -1,24 +1,30 @@
 PODS:
   - Alamofire (3.2.1)
   - GRMustache.swift (1.0.0)
+  - SwiftyJSON (2.3.2)
 
 DEPENDENCIES:
   - Alamofire (~> 3.0)
   - GRMustache.swift (from `https://github.com/groue/GRMustache.swift`)
+  - SwiftyJSON (from `https://github.com/SwiftyJSON/SwiftyJSON.git`)
 
 EXTERNAL SOURCES:
   GRMustache.swift:
     :git: https://github.com/groue/GRMustache.swift
+  SwiftyJSON:
+    :git: https://github.com/SwiftyJSON/SwiftyJSON.git
 
 CHECKOUT OPTIONS:
   GRMustache.swift:
     :commit: 4398ad4ee84b6b47be92c03535e2bc347ddc5156
     :git: https://github.com/groue/GRMustache.swift
+  SwiftyJSON:
+    :commit: 42bdb102d2624b143c07850ebdc1537d5b6579b6
+    :git: https://github.com/SwiftyJSON/SwiftyJSON.git
 
 SPEC CHECKSUMS:
   Alamofire: f11d8624a05f5d39e0c99309b3e600a3ba64298a
   GRMustache.swift: 40991f64a210756df6a0bd19f54283e41c176483
+  SwiftyJSON: 04ccea08915aa0109039157c7974cf0298da292a
 
-PODFILE CHECKSUM: 08d3ff86b8dbe6b244d33efa49aa72ac2f91d0d8
-
-COCOAPODS: 1.0.0.beta.3
+COCOAPODS: 0.39.0

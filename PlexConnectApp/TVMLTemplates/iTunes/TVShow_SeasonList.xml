@@ -51,7 +51,7 @@
 			<section>
 				{{# _children }}
 				<lockup>
-					<img src="thumb" width="226" height="226" />
+					<img src="{{ thumb }}" width="226" height="226" />
 					<title>{{ title }}</title>
 				</lockup>
 				{{/ _children }}

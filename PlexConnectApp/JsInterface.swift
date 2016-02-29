@@ -10,6 +10,7 @@ import Foundation
 import TVMLKit
 import Mustache
 import Alamofire
+import SwiftyJSON
 
 
 @objc protocol jsInterfaceProtocol : JSExport {
@@ -59,38 +60,30 @@ class cJsInterface: NSObject, jsInterfaceProtocol {
 		
 		Alamofire.request(.GET, getPmsUrl("", pmsId: id, pmsPath: path), headers: headers)
 			.responseJSON { response in
-				if let JSON = response.result.value {
-					var jsonArray = JSON as! Dictionary<String, AnyObject>
-					
-//					// TODO: Do a proper transform
-//					if jsonArray["thumb"] != nil {
-//						jsonArray["thumb"] = getPmsUrl("", pmsId: id, pmsPath: jsonArray["thumb"] as! String)
-//					}
-					
-//					jsonArray["_children"]
-					
-//					if jsonArray["_children"] {
-					
-//					print(Box(jsonArray))
-//					
-					for (key,var value) in jsonArray {
+				if let json = response.result.value {
+					var jsonArray = JSON(json)
+
+                    // TODO: Optimise this
+					for (key,value) in jsonArray {
 						if key == "thumb" {
-							jsonArray[key] = getPmsUrl("", pmsId: id, pmsPath: value as! String)
+							jsonArray[key].string = getPmsUrl("", pmsId: id, pmsPath: value.string!)
 						}
 						
 						if key == "_children" {
 							print(jsonArray[key])
-//							for (key, var value) in value as! [Dictionary<String, AnyObject>] {
-//								if key == "thumb" {
-//									value = getPmsUrl("", pmsId: id, pmsPath: value as! String)
-//								}
-//							}
+                            for (index,child) in jsonArray[key].array!.enumerate() {
+                                for (childkey, childvalue):(String, JSON) in child {
+                                    if childkey == "thumb" {
+                                        jsonArray[key][index][childkey].string = getPmsUrl("", pmsId: id, pmsPath: childvalue.string!)
+                                    }
+                                }
+							}
 						}
 					}
 					
 					do {
 						let template = try Template(string: templateStr);
-						tvmlTemplate = try template.render(Box(jsonArray))
+						tvmlTemplate = try template.render(Box(jsonArray.object as? NSObject))
 					} catch _ {
 						print("Mustache parse error")
 					}
