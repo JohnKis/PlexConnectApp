@@ -49,18 +49,12 @@
 				<title>Viewers Also Watched</title>
 			</header>
 			<section>
+				{{# _children }}
 				<lockup>
-					<img src="path to images on your server/Car_Movie_250x375_A.png" width="150" height="226" />
-					<title>Turn</title>
+					<img src="thumb" width="226" height="226" />
+					<title>{{ title }}</title>
 				</lockup>
-				<lockup>
-					<img src="path to images on your server/Car_Movie_250x375_B.png" width="150" height="226" />
-					<title>Road</title>
-				</lockup>
-				<lockup>
-					<img src="path to images on your server/Car_Movie_250x375_C.png" width="150" height="226" />
-					<title>Helicopter</title>
-				</lockup>
+				{{/ _children }}
 			</section>
 		</shelf>
 		

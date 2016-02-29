@@ -60,16 +60,40 @@ class cJsInterface: NSObject, jsInterfaceProtocol {
 		Alamofire.request(.GET, getPmsUrl("", pmsId: id, pmsPath: path), headers: headers)
 			.responseJSON { response in
 				if let JSON = response.result.value {
-//					var jsonArray = JSON as! Dictionary<String, AnyObject>
-//					
-//					if jsonArray.contains("thumb") {
-//						jsonArray.obje thumb = getPmsUrl("", pmsId: id, pmsPath: jsonArray.thumb)
+					var jsonArray = JSON as! Dictionary<String, AnyObject>
+					
+//					// TODO: Do a proper transform
+//					if jsonArray["thumb"] != nil {
+//						jsonArray["thumb"] = getPmsUrl("", pmsId: id, pmsPath: jsonArray["thumb"] as! String)
 //					}
+					
+//					jsonArray["_children"]
+					
+//					if jsonArray["_children"] {
+					
+//					print(Box(jsonArray))
+//					
+					for (key,var value) in jsonArray {
+						if key == "thumb" {
+							jsonArray[key] = getPmsUrl("", pmsId: id, pmsPath: value as! String)
+						}
+						
+						if key == "_children" {
+							print(jsonArray[key])
+//							for (key, var value) in value as! [Dictionary<String, AnyObject>] {
+//								if key == "thumb" {
+//									value = getPmsUrl("", pmsId: id, pmsPath: value as! String)
+//								}
+//							}
+						}
+					}
 					
 					do {
 						let template = try Template(string: templateStr);
-						tvmlTemplate = try template.render(Box(JSON as? NSObject))
-					} catch _ {}
+						tvmlTemplate = try template.render(Box(jsonArray))
+					} catch _ {
+						print("Mustache parse error")
+					}
 					
 					completionWrapper.callWithArguments([completion, 0, tvmlTemplate])
 				}
