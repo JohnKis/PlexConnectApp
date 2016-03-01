@@ -8,7 +8,7 @@
 					<header>
 						<title>Studio</title>
 					</header>
-                    <text>{{ _parent._children.first.studio }}</text>
+                    <text>{{ parent._children.first.studio }}</text>
 				</info>
 				<info>
 					<header>
@@ -20,7 +20,7 @@
 				</info>
 			</infoList>
 			<stack>
-				<title>{{ title2 }}</title>
+				<title>{{ title }}</title>
 				<row>
 					<text><badge src="resource://tomato-fresh"/> 99%</text>
 					<text>1hr 54min</text>
@@ -46,15 +46,15 @@
 		</banner>
 		<shelf>
 			<header>
-				<title>Viewers Also Watched</title>
+				<title>Seasons</title>
 			</header>
 			<section>
-				{{# _children }}
+				{{# seasons }}
 				<lockup>
 					<img src="{{ thumb }}" width="226" height="226" />
 					<title>{{ title }}</title>
 				</lockup>
-				{{/ _children }}
+				{{/ seasons }}
 			</section>
 		</shelf>
 		
