@@ -44,12 +44,7 @@ setupViewDocument: function(view, pmsId, pmsPath, useMustache) {
 	parser = new DOMParser();
 	doc = parser.parseFromString(docString, "application/xml");
   
-	// events: https://developer.apple.com/library/tvos/documentation/TVMLKit/Reference/TVViewElement_Ref/index.html#//apple_ref/c/tdef/TVElementEventType
-	doc.addEventListener("select", Presenter.onSelect.bind(Presenter));
-	doc.addEventListener("holdselect", Presenter.onHoldSelect.bind(Presenter));
-	doc.addEventListener("play", Presenter.onPlay.bind(Presenter));
-	doc.addEventListener("highlight", Presenter.onHighlight.bind(Presenter));
-	doc.addEventListener("load", Presenter.onLoad.bind(Presenter));  // setup search for char entered
+    Presenter.bindEvents(doc);
 	
 	return doc
 },
@@ -66,6 +61,7 @@ load: function(view, pmsId, pmsPath, title, useMustache) {
 		
 		swiftInterface.getViewIdPathUseMustacheCompletion(view, pmsId, pmsPath, true, function(template){
 			var doc = parser.parseFromString(template, "application/xml");
+            Presenter.bindEvents(doc);
 			navigationDocument.replaceDocument(doc, loadingDoc);
 		})
 		
@@ -101,6 +97,16 @@ loadContext(view, pmsId, pmsPath) {
   var doc = Presenter.setupViewDocument(view, pmsId, pmsPath);
   navigationDocument.presentModal(doc);
 },
+
+loadContextWithData(view, title, description) {
+    var parser = new DOMParser(),
+        docString = swiftInterface.getViewWithDataTitleDescription(view, title, description),
+        doc =  parser.parseFromString(docString, "application/xml");
+    
+    Presenter.bindEvents(doc);
+    navigationDocument.presentModal(doc);
+},
+
     
 closeContext() {
   navigationDocument.dismissModal();
@@ -144,7 +150,16 @@ loadParade: function(view, pmsId, pmsPath) {
     elem.innerHTML = elemNew.innerHTML;
   }
 },
-  
+
+bindEvents: function(doc){
+    // events: https://developer.apple.com/library/tvos/documentation/TVMLKit/Reference/TVViewElement_Ref/index.html#//apple_ref/c/tdef/TVElementEventType
+    doc.addEventListener("select", Presenter.onSelect.bind(Presenter));
+    doc.addEventListener("holdselect", Presenter.onHoldSelect.bind(Presenter));
+    doc.addEventListener("play", Presenter.onPlay.bind(Presenter));
+    doc.addEventListener("highlight", Presenter.onHighlight.bind(Presenter));
+    doc.addEventListener("load", Presenter.onLoad.bind(Presenter));  // setup search for char entered
+},
+    
 // store event for downstream use
 event: "",
 

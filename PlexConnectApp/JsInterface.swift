@@ -18,7 +18,10 @@ import SwiftyJSON
     
     // XMLConverter
     func getView(view: String, id: String, path: String) -> String
+    
+    // JSONConverter
 	func getView(view: String, id: String, path: String, useMustache: Bool, completion: JSValue) -> Void
+    func getViewWithData(view: String, title: String, description: String) -> String
     
     // Settings
     func toggleSetting(setting: String, view: String) -> String
@@ -63,6 +66,15 @@ class cJsInterface: NSObject, jsInterfaceProtocol {
 			completionWrapper.callWithArguments([completion, 0, template])
 		})
 	}
+    
+    func getViewWithData(view: String, title: String, description: String) -> String {
+        if self.jsonConverter == nil {
+            self.jsonConverter = cJSONConverter()
+        }
+        
+        return self.jsonConverter!.render(view, title: title, description: description)
+    }
+    
 	
     // Settings
     func toggleSetting(setting: String, view: String) -> String {

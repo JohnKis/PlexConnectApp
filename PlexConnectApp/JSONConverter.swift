@@ -34,6 +34,7 @@ class cJSONConverter {
 		// TODO: Optimise this
         var transformed : [String: AnyObject] = [:]
         var seasons : [AnyObject] = []
+        var cast : [AnyObject] = []
         var parent : JSON?
 
         // Set up completetion handler
@@ -78,7 +79,35 @@ class cJSONConverter {
             }
             
             if parent != nil {
-                transformed["parent"] = parent?.rawValue
+                if let elements = parent!["_children"][0]["_children"].array {
+                    for (index, item) in elements.enumerate() {
+                        if item["_elementType"].string == "Genre" {
+                            transformed["genre"] = item["tag"].string
+                        }
+                        
+                        if item["_elementType"].string != "Role" {
+                            continue
+                        }
+                        
+                        if cast.count > 4 {
+                            continue
+                        }
+                        
+                        cast.append(item.rawValue)
+                    }
+                }
+                
+//                transformed["parent"] = parent?.rawValue
+            }
+            
+            transformed["year"] = parent!["_children"][0]["year"].int
+            
+            if parent!["_children"][0]["contentRating"].string != nil {
+                transformed["contentRating"] = parent!["_children"][0]["contentRating"].string!.lowercaseString
+            }
+            
+            if cast.count > 0 {
+                transformed["cast"] = cast
             }
             
             print("Transformed: \(transformed)")
@@ -106,6 +135,7 @@ class cJSONConverter {
             self.transform(json, pmsId: pmsId, pmsPath: pmsPath, completion: { transformedJson in
                 do {
                     let template = try Template(string: templateStr);
+                    template.registerInBaseContext("HTMLEscape", Box(StandardLibrary.HTMLEscape))
                     tvmlTemplate = try template.render(Box(transformedJson.object as? NSObject))
                 } catch _ {
                     print("Mustache parse error")
@@ -115,4 +145,20 @@ class cJSONConverter {
             })
 		})
 	}
+    
+    func render(view: String, title: String, description: String) -> String {
+        let templateStr = readTVMLTemplate(view, theme: settings.getSetting("theme"))
+        var tvmlTemplate = ""
+        
+        do {
+            let template = try Template(string: templateStr);
+            template.registerInBaseContext("HTMLEscape", Box(StandardLibrary.HTMLEscape))
+            tvmlTemplate = try template.render(Box([ "title": title, "description": description ]))
+        } catch _ {
+            print("Mustache parse error")
+        }
+        
+        return tvmlTemplate
+
+    }
 }
