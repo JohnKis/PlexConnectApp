@@ -33,6 +33,7 @@ class cJSONConverter {
     func transform(var json: JSON, pmsId: String, pmsPath: String, completion: (JSON) -> Void){
 		// TODO: Optimise this
         var transformed : [String: AnyObject] = [:]
+		var helpers : [String: AnyObject] = [:]
         var seasons : [AnyObject] = []
         var cast : [AnyObject] = []
         var parent : JSON?
@@ -62,6 +63,15 @@ class cJSONConverter {
                         }
                         
                         if !json[key][index]["key"].string!.containsString("allLeaves"){
+							if json[key][index]["leafCount"].int != nil &&  json[key][index]["viewedLeafCount"].int != nil {
+								json[key][index]["watched"].bool = json[key][index]["leafCount"].int! == json[key][index]["viewedLeafCount"].int!
+								
+								json[key][index]["unwatchedCount"].int = json[key][index]["leafCount"].int! - json[key][index]["viewedLeafCount"].int!
+								
+								if json[key][index]["unwatchedCount"].int > 99 {
+									json[key][index]["unwatchedCount"].string = "99+"
+								}
+							}
                             seasons.append(json[key][index].rawValue)
                         }
                     }
@@ -101,7 +111,9 @@ class cJSONConverter {
             }
             
             transformed["year"] = parent!["_children"][0]["year"].int
-            
+			
+			transformed["studio"] = parent!["_children"][0]["studio"].string
+			
             if parent!["_children"][0]["contentRating"].string != nil {
                 transformed["contentRating"] = parent!["_children"][0]["contentRating"].string!.lowercaseString
             }
@@ -109,9 +121,19 @@ class cJSONConverter {
             if cast.count > 0 {
                 transformed["cast"] = cast
             }
-            
-            print("Transformed: \(transformed)")
-            
+			
+			if parent!["_children"][0]["leafCount"].int != nil &&  parent!["_children"][0]["viewedLeafCount"].int != nil {
+				transformed["watched"] = parent!["_children"][0]["leafCount"].int == parent!["_children"][0]["viewedLeafCount"].int
+			}
+			
+			// Add helpers
+			helpers["imagePath"] = NSBundle.mainBundle().bundleURL.absoluteString + "Images"
+			helpers["pmsId"] = pmsId
+			
+			transformed["_"] = helpers
+			
+//            print("Transformed: \(transformed)")
+			
             completion(JSON(transformed))
         }
 

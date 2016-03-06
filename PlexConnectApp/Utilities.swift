@@ -186,6 +186,7 @@ func readExternalContent(url: String) -> String? {
 func getResourceUrl(file: String, ext: String, dir: String) -> String {
     let bundle = NSBundle.mainBundle()
     if let url = bundle.URLForResource(file, withExtension: ext, subdirectory: dir) {
+		print(url.absoluteString)
         return url.absoluteString
     }
     return ""
