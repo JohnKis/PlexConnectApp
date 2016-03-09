@@ -33,7 +33,7 @@
 				<row>
 					<buttonLockup>
 						<badge src="resource://button-play" />
-						<title>Play</title>
+                        <title>Play {{ nextEpisode.description }}</title>
 					</buttonLockup>
 					<buttonLockup>
 						<badge src="resource://button-checkmark" />

@@ -12,161 +12,27 @@ import Alamofire
 import SwiftyJSON
 
 class cJSONConverter {
-	var data : [JSON]? = []
+    var aModels = [String: BaseModel]()
     
-    let usedKeys = ["title2", "theme", "thumb", "summary", "key", "_children"]
-	
-	func fetch(pmsId: String, pmsPath: String, completion: (JSON) -> Void) {
-		let headers = ["Accept": "application/json"]
-		
-		Alamofire.request(.GET, getPmsUrl("", pmsId: pmsId, pmsPath: pmsPath), headers: headers)
-			.responseJSON { response in
-				if let json = response.result.value {
-					completion(JSON(json))
-				} else {
-					// TODO
-				}
-		}
-	}
-	
-    // TODO: This is too specific for TV Shows
-    func transform(var json: JSON, pmsId: String, pmsPath: String, completion: (JSON) -> Void){
-		// TODO: Optimise this
-        var transformed : [String: AnyObject] = [:]
-		var helpers : [String: AnyObject] = [:]
-        var seasons : [AnyObject] = []
-        var cast : [AnyObject] = []
-        var parent : JSON?
-
-        // Set up completetion handler
-        let done = {
-            for (key,value) in json {
-                
-                if self.usedKeys.indexOf(key) == nil{
-                    continue
-                }
-                
-                switch key {
-                case "thumb":
-                    transformed[key] = getPmsUrl("", pmsId: pmsId, pmsPath: value.string!)
-                    break
-                case "_children":
-                    for (index,child) in json[key].array!.enumerate() {
-                        for (childkey, childvalue):(String, JSON) in child {
-                            if childkey == "key" && json[key][index][childkey].string!.containsString("allLeaves"){
-                                continue
-                            }
-                            
-                            if childkey == "thumb" {
-                                json[key][index][childkey].string = getPmsUrl("", pmsId: pmsId, pmsPath: childvalue.string!)
-                            }
-                        }
-                        
-                        if !json[key][index]["key"].string!.containsString("allLeaves"){
-							if json[key][index]["leafCount"].int != nil &&  json[key][index]["viewedLeafCount"].int != nil {
-								json[key][index]["watched"].bool = json[key][index]["leafCount"].int! == json[key][index]["viewedLeafCount"].int!
-								
-								json[key][index]["unwatchedCount"].int = json[key][index]["leafCount"].int! - json[key][index]["viewedLeafCount"].int!
-								
-								if json[key][index]["unwatchedCount"].int > 99 {
-									json[key][index]["unwatchedCount"].string = "99+"
-								}
-							}
-                            seasons.append(json[key][index].rawValue)
-                        }
-                    }
-                    break
-                case "title2":
-                    transformed["title"] = value.string
-                    break
-                default:
-                    transformed[key] = value.rawValue
-                }
-            }
-            
-            if seasons.count > 0 {
-                transformed["seasons"] = seasons
-            }
-            
-            if parent != nil {
-                if let elements = parent!["_children"][0]["_children"].array {
-                    for (index, item) in elements.enumerate() {
-                        if item["_elementType"].string == "Genre" {
-                            transformed["genre"] = item["tag"].string
-                        }
-                        
-                        if item["_elementType"].string != "Role" {
-                            continue
-                        }
-                        
-                        if cast.count > 4 {
-                            continue
-                        }
-                        
-                        cast.append(item.rawValue)
-                    }
-                }
-                
-//                transformed["parent"] = parent?.rawValue
-            }
-            
-            transformed["year"] = parent!["_children"][0]["year"].int
-			
-			transformed["studio"] = parent!["_children"][0]["studio"].string
-			
-            if parent!["_children"][0]["contentRating"].string != nil {
-                transformed["contentRating"] = parent!["_children"][0]["contentRating"].string!.lowercaseString
-            }
-            
-            if cast.count > 0 {
-                transformed["cast"] = cast
-            }
-			
-			if parent!["_children"][0]["leafCount"].int != nil &&  parent!["_children"][0]["viewedLeafCount"].int != nil {
-				transformed["watched"] = parent!["_children"][0]["leafCount"].int == parent!["_children"][0]["viewedLeafCount"].int
-			}
-			
-			// Add helpers
-			helpers["imagePath"] = NSBundle.mainBundle().bundleURL.absoluteString + "Images"
-			helpers["pmsId"] = pmsId
-			
-			transformed["_"] = helpers
-			
-//            print("Transformed: \(transformed)")
-			
-            completion(JSON(transformed))
-        }
-
+    func render(view: String, pmsId: String, pmsPath: String, completion: (String) -> Void) {
+        let templateStr = readTVMLTemplate(view, theme: settings.getSetting("theme"))
+        let Model = self.getModel(view)
+        var tvmlTemplate = ""
         
-        if json["key"].string != nil {
-            // TODO: Caching
-            self.fetch(pmsId, pmsPath: pmsPath.stringByReplacingOccurrencesOfString("/children", withString: ""), completion: { json in
-                parent = json
-                done()
-            })
-        } else {
-            done()
-        }
-	}
-	
-	func render(view: String, pmsId: String, pmsPath: String, completion: (String) -> Void) {
-		let templateStr = readTVMLTemplate(view, theme: settings.getSetting("theme"))
-		var tvmlTemplate = ""
-		
-		self.fetch(pmsId, pmsPath: pmsPath, completion: { json in
-            self.transform(json, pmsId: pmsId, pmsPath: pmsPath, completion: { transformedJson in
-                do {
-                    let template = try Template(string: templateStr);
-                    template.registerInBaseContext("HTMLEscape", Box(StandardLibrary.HTMLEscape))
-                    tvmlTemplate = try template.render(Box(transformedJson.object as? NSObject))
-                } catch _ {
-                    print("Mustache parse error")
-                }
-                
-                completion(tvmlTemplate)
-            })
-		})
-	}
+        Model.setKey(pmsPath, pmsId: pmsId)
+        
+        Model.fetch(pmsId, pmsPath: pmsPath, completion: { json in
+            do {
+                let template = try Template(string: templateStr);
+                template.registerInBaseContext("HTMLEscape", Box(StandardLibrary.HTMLEscape))
+                tvmlTemplate = try template.render(Box(json.object as? NSObject))
+            } catch _ {
+                print("Mustache parse error")
+            }
+            
+            completion(tvmlTemplate)
+        })
+    }
     
     func render(view: String, title: String, description: String) -> String {
         let templateStr = readTVMLTemplate(view, theme: settings.getSetting("theme"))
@@ -181,6 +47,24 @@ class cJSONConverter {
         }
         
         return tvmlTemplate
-
+        
+    }
+    
+    func getModel(type: String) -> BaseModel {
+        if self.aModels[type] == nil {
+            var Model : BaseModel?
+            
+            switch type {
+            case "TVShow_SeasonList":
+                Model = SeriesModel()
+                break;
+            default:
+                break;
+            }
+            
+            self.aModels[type] = Model
+        }
+        
+        return self.aModels[type]!
     }
 }
