@@ -14,7 +14,6 @@ class SeriesModel: BaseModel {
     
     override func transform(var json: JSON, pmsId: String, pmsPath: String, completion: (JSON) -> Void){
         // TODO: Optimise this
-//        var transformed : [String: AnyObject] = [:]
         var seasons : [AnyObject] = []
         var cast : [AnyObject] = []
         var parent : JSON?
@@ -22,7 +21,7 @@ class SeriesModel: BaseModel {
         // Set up completetion handler
         let done = {
             for (key,value) in json {
-                
+                // Continue if we're not interested in the key
                 if self.usedKeys.indexOf(key) == nil{
                     continue
                 }
@@ -64,8 +63,7 @@ class SeriesModel: BaseModel {
                     self.transformed[key] = value.rawValue
                 }
             }
-            
-            
+			
             if parent != nil {
                 if let elements = parent!["_children"][0]["_children"].array {
                     for item in elements {
@@ -132,7 +130,8 @@ class SeriesModel: BaseModel {
             done()
         }
     }
-    
+	
+	// TODO: Not working if all episodes are unwatched
     func getNextUnwatchedEpisode(completion: ([String: AnyObject]) -> Void){
         var episode : [String: AnyObject] = [:]
         var firstUnwatchedSeason : JSON?
@@ -161,13 +160,14 @@ class SeriesModel: BaseModel {
                     if ep["viewCount"] == nil {
                         continue
                     }
-                    
+					
+					let episodeNumber : String = ep["index"].intValue < 10 ? "0\(ep["index"].stringValue)" : ep["index"].stringValue
+					
                     episode["key"] = ep["key"].stringValue
-                    episode["description"] = "\(firstUnwatchedSeason!["index"].stringValue)x\(ep["index"].stringValue)"
+                    episode["description"] = "\(firstUnwatchedSeason!["index"].stringValue)x\(episodeNumber)"
                     
                     break;
                 }
-                // TODO: Find first unwatched
                 
                 completion(episode)
             })
