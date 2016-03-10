@@ -31,11 +31,12 @@
 				</row>
 				<description allowsZooming="true" moreLabel="more" onSelect="Presenter.loadContextWithData('TVShow_SeasonListDescription', '{{ HTMLEscape(title) }}', '{{ HTMLEscape(summary) }}')">{{ summary }}</description>
 				<row>
-					<buttonLockup>
+					<buttonLockup onSelect="videoPlayer.play('{{ _.pmsId }}', '{{ nextEpisode.key }}')">
 						<badge src="resource://button-play" />
                         <title>Play {{ nextEpisode.description }}</title>
 					</buttonLockup>
-					<buttonLockup>
+                    <!-- TODO - Add a context dialog to mark it watched/unwatched -->
+					<buttonLockup onSelect="swiftInterface.sendPmsPath('{{ _.pmsId }}', '/:/scrobble?key={{ key }}&amp;identifier=com.plexapp.plugins.library');">
 						<badge src="resource://button-checkmark" />
 						<title>Mark as watched</title>
 					</buttonLockup>

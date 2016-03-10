@@ -157,7 +157,7 @@ class SeriesModel: BaseModel {
             self.__GET(getPmsUrl("", pmsId: self.pmsId!, pmsPath: firstUnwatchedSeason!["key"].stringValue), success: { json in
                 
                 for ep in json["_children"].array! {
-                    if ep["viewCount"] == nil {
+                    if ep["viewCount"] != nil {
                         continue
                     }
 					
