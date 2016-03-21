@@ -78,9 +78,31 @@ load: function(view, pmsId, pmsPath, title, useMustache) {
 	//navigationDocument.dismissModal();  // just in case?!  // todo: if (isModal)...?
 },
 
-loadAndSwap: function(view, pmsId, pmsPath) {
-  var currentDoc = navigationDocument.documents[navigationDocument.documents.length-1];
-  var loadingDoc = createSpinner("");
+loadAndSwap: function(view, pmsId, pmsPath, title, useMustache, loadingIndicator) {
+    if (typeof title != "string")
+        title = "";
+    
+    var currentDoc = navigationDocument.documents[navigationDocument.documents.length-1];
+    var loadingDoc = createSpinner(title);
+    
+    if (useMustache){
+        var parser = new DOMParser();
+        
+        if (loadingIndicator){
+            var loadingDoc = createSpinner(title);
+            
+            navigationDocument.replaceDocument(loadingDoc, currentDoc)
+        }
+        
+        swiftInterface.getViewIdPathUseMustacheCompletion(view, pmsId, pmsPath, true, function(template){
+            var doc = parser.parseFromString(template, "application/xml");
+            Presenter.bindEvents(doc);
+            navigationDocument.replaceDocument(doc, loadingIndicator ? loadingDoc : currentDoc);
+        })
+        
+        return;
+    }
+    
   loadingDoc.addEventListener("load", function() {
       var doc = Presenter.setupViewDocument(view, pmsId, pmsPath);
       navigationDocument.replaceDocument(doc, loadingDoc);
@@ -89,6 +111,31 @@ loadAndSwap: function(view, pmsId, pmsPath) {
   // navigationDocument.dismissModal();  // just in case?!  // todo: if (isModal)...?
 },
 
+swapElements: function(view, pmsId, pmsPath, title, useMustache, elements, autoFocusElement) {
+    var parser = new DOMParser();
+    
+    swiftInterface.getViewIdPathUseMustacheCompletion(view, pmsId, pmsPath, true, function(template){
+                                                      setTimeout(function(){
+                                                          var doc = parser.parseFromString(template, "application/xml");
+                                                          var activeDocument = getActiveDocument();
+                                                          
+                                                          for (i in elements){
+                                                            if (typeof activeDocument.getElementById(elements[i]) == 'undefined')
+                                                              continue;
+                                                          
+                                                            console.log(doc.getElementById(elements[i]).outerHTML)
+                                                          
+                                                            activeDocument.getElementById(elements[i]).outerHTML = doc.getElementById(elements[i]).outerHTML
+                                                          
+                                                              if (elements[i] == autoFocusElement){
+                                                                console.log("Auto focus element: "+autoFocusElement)
+                                                                  activeDocument.getElementById(elements[i]).setAttribute("autoHighlight","true");
+                                                              }
+                                                          }
+                                                                 }, 500);
+    })
+},
+    
 close() {
   navigationDocument.popDocument();
 },
@@ -97,11 +144,11 @@ loadContext(view, pmsId, pmsPath) {
   var doc = Presenter.setupViewDocument(view, pmsId, pmsPath);
   navigationDocument.presentModal(doc);
 },
-
-loadContextWithData(view, title, description) {
+    
+loadContextWithData(view, data) {
     var parser = new DOMParser(),
-        docString = swiftInterface.getViewWithDataTitleDescription(view, title, description),
-        doc =  parser.parseFromString(docString, "application/xml");
+    docString = swiftInterface.getViewData(view, data),
+    doc =  parser.parseFromString(docString, "application/xml");
     
     Presenter.bindEvents(doc);
     navigationDocument.presentModal(doc);
@@ -112,23 +159,41 @@ closeContext() {
   navigationDocument.dismissModal();
 },
   
-loadMenuContent: function(view, pmsId, pmsPath) {
-  console.log("loadMenuContent");
-  var elem = this.event.target;  // todo: check event existing
-  var id = elem.getAttribute("id");
+loadMenuContent: function(view, pmsId, pmsPath, useMustache) {
+    console.log("loadMenuContent");
+    var elem = this.event.target;  // todo: check event existing
+    var id = elem.getAttribute("id");
   
-  var feature = elem.parentNode.getFeature("MenuBarDocument");
-  if (feature) {
-    var currentDoc = feature.getDocument(elem);
-    if (!currentDoc  // todo: better algorithm to decide on doc reload
-        || (id!="Search" && id!="Settings")) {  // currently: force reload on each but Settings, Search
+    var feature = elem.parentNode.getFeature("MenuBarDocument");
+    if (feature) {
+        var loadingDoc = createSpinner("");
+        if (useMustache){
+            var parser = new DOMParser();
+            
+            feature.setDocument(loadingDoc, elem);
+            
+            swiftInterface.getViewIdPathUseMustacheCompletion(view, pmsId, pmsPath, true, function(template){
+                var doc = parser.parseFromString(template, "application/xml");
+                Presenter.bindEvents(doc);
+                feature.setDocument(doc, elem);
+            })
+            
+            
+            return;
+        }
+        
+        
+        
+        var currentDoc = feature.getDocument(elem);
+        if (!currentDoc  // todo: better algorithm to decide on doc reload
+            || (id!="Search" && id!="Settings")) {  // currently: force reload on each but Settings, Search
 
-      var loadingDoc = createSpinner("");
-      feature.setDocument(loadingDoc, elem);
-      var doc = Presenter.setupViewDocument(view, pmsId, pmsPath);
-      feature.setDocument(doc, elem);
+              var loadingDoc = createSpinner("");
+              feature.setDocument(loadingDoc, elem);
+              var doc = Presenter.setupViewDocument(view, pmsId, pmsPath);
+              feature.setDocument(doc, elem);
+        }
     }
-  }
 },
 
 loadParade: function(view, pmsId, pmsPath) {

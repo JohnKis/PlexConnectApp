@@ -21,7 +21,7 @@ import SwiftyJSON
     
     // JSONConverter
 	func getView(view: String, id: String, path: String, useMustache: Bool, completion: JSValue) -> Void
-    func getViewWithData(view: String, title: String, description: String) -> String
+    func getView(view: String, data: JSValue) -> String
     
     // Settings
     func toggleSetting(setting: String, view: String) -> String
@@ -36,6 +36,7 @@ import SwiftyJSON
     func switchHomeUserId(id: String, pin: String, view: String) -> String
     
     func sendPms(id: String, path: String) -> Void
+    func setWatchedStatus(id: String, path: String, watched: Bool, completion: JSValue) -> Void
 }
 
 
@@ -69,14 +70,13 @@ class cJsInterface: NSObject, jsInterfaceProtocol {
 		})
 	}
     
-    func getViewWithData(view: String, title: String, description: String) -> String {
+    func getView(view: String, data: JSValue) -> String {
         if self.jsonConverter == nil {
             self.jsonConverter = cJSONConverter()
         }
         
-        return self.jsonConverter!.render(view, title: title, description: description)
+        return self.jsonConverter!.render(view, data: data.toObject())
     }
-    
 	
     // Settings
     func toggleSetting(setting: String, view: String) -> String {
@@ -122,5 +122,18 @@ class cJsInterface: NSObject, jsInterfaceProtocol {
     func sendPms(id: String, path: String) -> Void {
         let url = getPmsUrl("", pmsId: id, pmsPath: path)
         reqXML(url, fn_success: {_ in }, fn_error: {_ in })  // send notification to PMS, don't care about response
+    }
+    
+    func setWatchedStatus(id: String, path: String, watched: Bool, completion: JSValue) {
+        let completionWrapper = JSContext.currentContext().objectForKeyedSubscript("setTimeout")
+
+        if let Model = ModelRegister.sharedInstance.getModel(path, pmsId: id){
+            Model.setWatchedStatus(watched, completion: {
+                completionWrapper.callWithArguments([completion, 0])
+            })
+        } else {
+            print("Couldn't find model for id: \(id) and path: \(path)")
+            // TODO: Expection
+        }
     }
 }

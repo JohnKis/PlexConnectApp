@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+Copyright (C) 2015 Baa. All rights reserved.
+See LICENSE.txt for this sample’s licensing information
+-->
+{{CUT({{GET(noItems)}})}}{{
+{{SET(noItems:true)}}
+<document>
+  <paradeTemplate>
+    <list>
+      <!--
+      <relatedContent>
+        <itemBanner>
+          <heroImg src="${this.BASEURL}resources/images/italy/italy_10_square.jpg" />
+        </itemBanner>
+      </relatedContent>
+      -->
+      <header>
+        <title>{{TEXT(Library)}}</title>
+      </header>
+
+{{PMSLOOP(owned)}}{{
+{{XML()}}{{
+      <section>
+        <header>
+          <title>{{PMSVAL(name)}}</title>
+        </header>
+{{COPY(MediaContainer/Directory)}}{{
+{{SET(noItems:false)}}
+{{IF({{CHK("{{VAL(type:)}}"=="movie")}})}}{{
+        <listItemLockup
+            onSelect="Presenter.load('Movie_MenuBar', '{{PMSID()}}', '{{PATH({{VAL(key)}})}}')"
+            onSelectHold="modal"
+            onHighlight="Presenter.loadParade('Movie_Parade', '{{PMSID()}}', '{{PATH({{VAL(key)}})}}')"
+            >
+          <title><![CDATA[{{VAL(title)}}]]></title>
+          <relatedContent />
+        </listItemLockup>
+}}
+{{IF({{CHK("{{VAL(type:)}}"=="show")}})}}{{
+        <listItemLockup
+            onSelect="Presenter.load('TVShow_MenuBar', '{{PMSID()}}', '{{PATH({{VAL(key)}})}}', 'TV Shows')"
+            onSelectHold="modal"
+            onHighlight="Presenter.loadParade('TVShow_Parade', '{{PMSID()}}', '{{PATH({{VAL(key)}})}}')"
+            >
+          <title><![CDATA[{{VAL(title)}}]]></title>
+          <relatedContent />
+        </listItemLockup>
+}}
+{{IF({{CHK("{{VAL(type:)}}"=="artist")}})}}{{
+        <listItemLockup
+            onSelect="Presenter.load('Music_MenuBar', '{{PMSID()}}', '{{PATH({{VAL(key)}})}}')"
+            onSelectHold="modal"
+            onHighlight="Presenter.loadParade('Music_Parade', '{{PMSID()}}', '{{PATH({{VAL(key)}})}}')"
+            >
+          <title><![CDATA[{{VAL(title)}}]]></title>
+          <relatedContent />
+        </listItemLockup>
+}}
+{{IF({{CHK("{{VAL(type:)}}"=="photo")}})}}{{
+        <listItemLockup
+            onSelect="Presenter.load('Photo_MenuBar', '{{PMSID()}}', '{{PATH({{VAL(key)}})}}')"
+            onSelectHold="modal"
+            onHighlight="Presenter.loadParade('Photo_Parade', '{{PMSID()}}', '{{PATH({{VAL(key)}})}}')"
+            >
+          <title><![CDATA[{{VAL(title)}}]]></title>
+          <relatedContent />
+        </listItemLockup>
+}}
+}}
+
+        <!-- search -->
+        <listItemLockup
+            onSelect="Presenter.load('Search', '{{PMSID()}}', '')"
+            onSelectHold="modal"
+            >
+          <title>{{TEXT(Search)}}</title>
+          <decorationImage src="resource://chevron" />
+        </listItemLockup>
+
+      </section>
+}}
+}}
+    </list>
+  </paradeTemplate>
+</document>
+}}
+
+{{IF({{GET(noItems)}})}}{{  <!--enable if no items added-->
+<document>
+  <alertTemplate>
+    <title>TITLE</title>
+    <description>{{TEXT(Plex Media Server: No Items Available)}}</description>
+  </alertTemplate>
+</document>
+}}

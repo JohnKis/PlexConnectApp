@@ -10,62 +10,35 @@ import Foundation
 import SwiftyJSON
 
 class SeriesModel: BaseModel {
-    let usedKeys = ["title2", "theme", "thumb", "summary", "key", "_children"]
+    let usedKeys = ["title", "contentRating", "thumb", "summary", "key", "ratingKey", "studio", "year", "_children"]
     
-    override func transform(var json: JSON, pmsId: String, pmsPath: String, completion: (JSON) -> Void){
+    override func transform(var json: JSON){
         // TODO: Optimise this
         var seasons : [AnyObject] = []
         var cast : [AnyObject] = []
-        var parent : JSON?
         
-        // Set up completetion handler
-        let done = {
-            for (key,value) in json {
-                // Continue if we're not interested in the key
-                if self.usedKeys.indexOf(key) == nil{
-                    continue
-                }
-                
-                switch key {
-                case "thumb":
-                    self.transformed[key] = getPmsUrl("", pmsId: pmsId, pmsPath: value.string!)
-                    break
-                case "_children":
-                    for (index,child) in json[key].array!.enumerate() {
-                        for (childkey, childvalue):(String, JSON) in child {
-                            if childkey == "key" && json[key][index][childkey].string!.containsString("allLeaves"){
-                                continue
-                            }
-                            
-                            if childkey == "thumb" {
-                                json[key][index][childkey].string = getPmsUrl("", pmsId: pmsId, pmsPath: childvalue.string!)
-                            }
-                        }
-                        
-                        if !json[key][index]["key"].string!.containsString("allLeaves"){
-                            if json[key][index]["leafCount"].int != nil &&  json[key][index]["viewedLeafCount"].int != nil {
-                                json[key][index]["watched"].bool = json[key][index]["leafCount"].int! == json[key][index]["viewedLeafCount"].int!
-                                
-                                json[key][index]["unwatchedCount"].int = json[key][index]["leafCount"].int! - json[key][index]["viewedLeafCount"].int!
-                                
-                                if json[key][index]["unwatchedCount"].int > 99 {
-                                    json[key][index]["unwatchedCount"].string = "99+"
-                                }
-                            }
-                            seasons.append(json[key][index].rawValue)
-                        }
-                    }
-                    break
-                case "title2":
-                    self.transformed["title"] = value.string
-                    break
-                default:
-                    self.transformed[key] = value.rawValue
-                }
+        for (key,value) in json {
+            // Continue if we're not interested in the key
+            if self.usedKeys.indexOf(key) == nil{
+                continue
             }
-			
-            if parent != nil {
-                if let elements = parent!["_children"][0]["_children"].array {
+            
+            switch key {
+            case "key":
+                self.transformed["childPath"] = value.stringValue
+                break
+            case "ratingKey":
+                self.transformed["id"] = value.stringValue
+                self.transformed["path"] = "/library/metadata/" + value.stringValue
+                break
+            case "contentRating":
+                self.transformed["contentRating"] = value.stringValue.lowercaseString
+                break
+            case "thumb":
+                self.transformed[key] = self.getThumbUrls(value.stringValue)
+                break
+            case "_children":
+                if let elements = value.array {
                     for item in elements {
                         if item["_elementType"].string == "Genre" {
                             self.transformed["genre"] = item["tag"].string
@@ -75,66 +48,90 @@ class SeriesModel: BaseModel {
                             continue
                         }
                         
-                        if cast.count > 4 {
+                        if cast.count > 7 {
                             continue
                         }
                         
                         cast.append(item.rawValue)
                     }
                 }
+                break
+            default:
+                self.transformed[key] = value.rawValue
+            }
+        }
+        
+        if json["leafCount"].int != nil &&  json["viewedLeafCount"].int != nil {
+            self.transformed["watched"] = json["leafCount"].int == json["viewedLeafCount"].int
+            
+            if self.transformed["watched"]!.boolValue == false && json["viewedLeafCount"].int > 0 {
+                self.transformed["partiallyWatched"] = true
+            } else {
+                self.transformed["partiallyWatched"] = false
+            }
+        }
+        
+        // Append cast
+        if cast.count > 0 {
+            self.transformed["cast"] = cast
+        }
+        
+        // Append helpers
+        self.transformed["_"] = self.globalHelpers()
+        
+        if self.children != nil {
+            for (index,_) in self.children!["_children"].array!.enumerate() {
+                let season = ModelRegister.sharedInstance.createModel("season", path: "/library/metadata/" + self.children!["_children"][index]["ratingKey"].stringValue, pmsId: self.pmsId!)
                 
-                self.transformed["year"] = parent!["_children"][0]["year"].int
-                
-                self.transformed["studio"] = parent!["_children"][0]["studio"].string
-                
-                if parent!["_children"][0]["contentRating"].string != nil {
-                    self.transformed["contentRating"] = parent!["_children"][0]["contentRating"].string!.lowercaseString
-                }
-                
-                if parent!["_children"][0]["leafCount"].int != nil &&  parent!["_children"][0]["viewedLeafCount"].int != nil {
-                    self.transformed["watched"] = parent!["_children"][0]["leafCount"].int == parent!["_children"][0]["viewedLeafCount"].int
-                }
+                // TODO
+                season.transform(self.children!["_children"][index])
+                seasons.append(season.transformed)
             }
             
             // Append seasons and next episode info
             if seasons.count > 0 {
                 self.transformed["seasons"] = seasons
             }
-            
-            // Append cast
-            if cast.count > 0 {
-                self.transformed["cast"] = cast
-            }
-            
-            // Append helpers
-            self.transformed["_"] = self.globalHelpers()
-            
-            self.getNextUnwatchedEpisode({ episode in
-                self.transformed["nextEpisode"] = episode
-                
-                completion(JSON(self.transformed))
-            })
         }
         
         
-        if json["key"].string != nil {
-            // TODO: Caching
-            // Fetch parent
-            self.__GET(getPmsUrl("", pmsId: pmsId, pmsPath: pmsPath.stringByReplacingOccurrencesOfString("/children", withString: "")),
-                success: { json in
-                    parent = json
-                    done()
-                }
-            )
-        } else {
-            done()
-        }
+        //print("Series: \(self.transformed)")
     }
 	
+    override func fetch(completion: (JSON) -> Void) {
+        self.__GET(getPmsUrl("", pmsId: self.pmsId!, pmsPath: self.key!),
+            success: { json in
+                let done = {
+                    self.transform(json["_children"][0])
+                    
+                    self.getNextUnwatchedEpisode({ episode in
+                        self.transformed["nextEpisode"] = episode
+                        
+                        completion(JSON(self.transformed))
+                    })
+                }
+                
+                if json["_children"][0]["key"].string != nil {
+                    // Fetch children
+                    self.__GET(getPmsUrl("", pmsId: self.pmsId!, pmsPath: json["_children"][0]["key"].stringValue + "?excludeAllLeaves=1"),
+                        success: { json in
+                            self.children = json
+                            done()
+                        }
+                    )
+                } else {
+                    done()
+                }
+                
+            }
+        )
+    }
+    
 	// TODO: Not working if all episodes are unwatched
     func getNextUnwatchedEpisode(completion: ([String: AnyObject]) -> Void){
         var episode : [String: AnyObject] = [:]
         var firstUnwatchedSeason : JSON?
+        var firstUnwatchedEpisode: JSON?
         
         if self.pmsId == nil || self.key == nil {
             // TODO: throw exception
@@ -153,21 +150,33 @@ class SeriesModel: BaseModel {
             break
         }
         
+        if firstUnwatchedSeason == nil {
+            firstUnwatchedSeason = JSON(seasons[0])
+        }
+        
         if firstUnwatchedSeason != nil {
-            self.__GET(getPmsUrl("", pmsId: self.pmsId!, pmsPath: firstUnwatchedSeason!["key"].stringValue), success: { json in
+            self.__GET(getPmsUrl("", pmsId: self.pmsId!, pmsPath: firstUnwatchedSeason!["childPath"].stringValue), success: { json in
                 
                 for ep in json["_children"].array! {
                     if ep["viewCount"] != nil {
                         continue
                     }
 					
-					let episodeNumber : String = ep["index"].intValue < 10 ? "0\(ep["index"].stringValue)" : ep["index"].stringValue
-					
-                    episode["key"] = ep["key"].stringValue
-                    episode["description"] = "\(firstUnwatchedSeason!["index"].stringValue)x\(episodeNumber)"
+                    firstUnwatchedEpisode = ep
+                    
                     
                     break;
                 }
+                
+                if firstUnwatchedEpisode == nil {
+                    firstUnwatchedEpisode = json["_children"].array![0]
+                }
+                
+                let episodeNumber : String = firstUnwatchedEpisode!["index"].intValue < 10 ? "0\(firstUnwatchedEpisode!["index"].stringValue)" : firstUnwatchedEpisode!["index"].stringValue
+                
+                episode["key"] = firstUnwatchedEpisode!["key"].stringValue
+                episode["description"] = "\(firstUnwatchedSeason!["index"].stringValue)x\(episodeNumber)"
+
                 
                 completion(episode)
             })

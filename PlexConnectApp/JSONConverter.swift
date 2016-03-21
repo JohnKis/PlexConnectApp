@@ -12,16 +12,18 @@ import Alamofire
 import SwiftyJSON
 
 class cJSONConverter {
-    var aModels = [String: BaseModel]()
-    
     func render(view: String, pmsId: String, pmsPath: String, completion: (String) -> Void) {
         let templateStr = readTVMLTemplate(view, theme: settings.getSetting("theme"))
-        let Model = self.getModel(view)
+        var Model = ModelRegister.sharedInstance.getModel(pmsPath, pmsId: pmsId)
         var tvmlTemplate = ""
         
-        Model.setKey(pmsPath, pmsId: pmsId)
+        print(pmsPath)
         
-        Model.fetch(pmsId, pmsPath: pmsPath, completion: { json in
+        if Model == nil {
+            Model = ModelRegister.sharedInstance.createModel(self.getModelTypeForView(view), path: pmsPath, pmsId: pmsId)
+        }
+        
+        Model!.fetch({ json in
             do {
                 let template = try Template(string: templateStr);
                 template.registerInBaseContext("HTMLEscape", Box(StandardLibrary.HTMLEscape))
@@ -34,37 +36,36 @@ class cJSONConverter {
         })
     }
     
-    func render(view: String, title: String, description: String) -> String {
+    func render(view: String, data: AnyObject) -> String {
         let templateStr = readTVMLTemplate(view, theme: settings.getSetting("theme"))
         var tvmlTemplate = ""
         
         do {
             let template = try Template(string: templateStr);
             template.registerInBaseContext("HTMLEscape", Box(StandardLibrary.HTMLEscape))
-            tvmlTemplate = try template.render(Box([ "title": title, "description": description ]))
+            tvmlTemplate = try template.render(Box(data as? NSObject))
         } catch _ {
             print("Mustache parse error")
         }
         
         return tvmlTemplate
-        
     }
     
-    func getModel(type: String) -> BaseModel {
-        if self.aModels[type] == nil {
-            var Model : BaseModel?
-            
-            switch type {
-            case "TVShow_SeasonList":
-                Model = SeriesModel()
-                break;
-            default:
-                break;
-            }
-            
-            self.aModels[type] = Model
+    func getModelTypeForView(view: String) -> String{
+        var modelType = ""
+        
+        switch view {
+        case "TVShow_ShowList":
+            modelType = "shows"
+            break
+        case "TVShow_SeasonList":
+            modelType = "series"
+            break
+        default:
+            // TODO: Exception
+            break
         }
         
-        return self.aModels[type]!
+        return modelType
     }
 }

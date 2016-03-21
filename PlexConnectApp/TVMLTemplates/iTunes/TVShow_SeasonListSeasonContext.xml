@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+Copyright (C) 2015 Baa. All rights reserved.
+See LICENSE.txt for this sample’s licensing information
+-->
+
+<document>
+    <alertTemplate>
+        <button onSelect="Presenter.closeContext(); swiftInterface.setWatchedStatusPathWatchedCompletion('{{ pmsId }}', '{{ path }}', {{ watched }}, function(){
+                Presenter.swapElements('TVShow_SeasonList', '{{ pmsId }}', '{{ parentPath }}', '', true, [ 'show_title', 'controls', '{{ id }}' ], '{{ id }}');
+            });">
+            <text>Mark as {{^watched}}un{{/watched}}watched</text>
+        </button>
+        {{#partiallyWatched}}
+        <button onSelect="Presenter.closeContext(); swiftInterface.setWatchedStatusPathWatchedCompletion('{{ pmsId }}', '{{ path }}', false, function(){
+            Presenter.swapElements('TVShow_SeasonList', '{{ pmsId }}', '{{ parentPath }}', '', true, [ 'show_title', 'controls', '{{ id }}' ], '{{ id }}');
+            });">
+            <text>Mark as unwatched</text>
+        </button>
+        {{/partiallyWatched}}
+    </alertTemplate>
+</document>
+

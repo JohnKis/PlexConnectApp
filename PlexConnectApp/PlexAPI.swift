@@ -213,7 +213,7 @@ func getPmsUrl(key: String, pmsId: String, pmsPath: String) -> String {
         url = url + queryDelimiter + "X-Plex-Token=" + token
     }
     
-    print("request: \(url)")
+    //print("request: \(url)")
     return url
 }
 

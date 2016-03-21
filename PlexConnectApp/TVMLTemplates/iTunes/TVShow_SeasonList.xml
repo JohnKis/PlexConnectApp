@@ -20,7 +20,7 @@
 				</info>
 			</infoList>
 			<stack>
-				<title>{{ title }}{{^watched}} <badge src="{{ _.imagePath }}/dot.png" class="badge" style="tv-tint-color: rgb(0,122,255);" />{{/watched}}</title>
+				<title id="show_title">{{ title }}{{^watched}} <badge src="{{ _.imagePath }}/dot.png" class="badge" style="tv-tint-color: rgb(0,122,255);" />{{/watched}}</title>
 				<row>
 					<!--					<text><badge src="resource://tomato-fresh"/> 99%</text>-->
 					<!--					<text>1hr 54min</text>-->
@@ -29,29 +29,35 @@
 					<badge src="resource://{{ contentRating }}" class="badge" style="tv-tint-color: rgb(255,255,255)" />
 					<!--					<badge src="resource://cc" class="badge" />-->
 				</row>
-				<description allowsZooming="true" moreLabel="more" onSelect="Presenter.loadContextWithData('TVShow_SeasonListDescription', '{{ HTMLEscape(title) }}', '{{ HTMLEscape(summary) }}')">{{ summary }}</description>
-				<row>
+				<description allowsZooming="true" moreLabel="more" onSelect="Presenter.loadContextWithData('TVShow_SeasonListDescription', { title: '{{ HTMLEscape(title) }}', description: '{{ HTMLEscape(summary) }}'})">{{ summary }}</description>
+				<row id="controls">
 					<buttonLockup onSelect="videoPlayer.play('{{ _.pmsId }}', '{{ nextEpisode.key }}')">
 						<badge src="resource://button-play" />
                         <title>Play {{ nextEpisode.description }}</title>
 					</buttonLockup>
-                    <!-- TODO - Add a context dialog to mark it watched/unwatched -->
-					<buttonLockup onSelect="swiftInterface.sendPmsPath('{{ _.pmsId }}', '/:/scrobble?key={{ key }}&amp;identifier=com.plexapp.plugins.library');">
-						<badge src="resource://button-checkmark" />
-						<title>Mark as watched</title>
-					</buttonLockup>
+                    <buttonLockup onSelect="Presenter.loadContextWithData('TVShow_SeasonListContext', { watched: {{#watched}}false{{/watched}}{{^watched}}true{{/watched}}, path: '{{ path }}', item: 'show', pmsId: '{{ _.pmsId }}' })">
+                        <badge src="resource://button-checkmark" />
+                        <title>Mark as {{#watched}}un{{/watched}}watched</title>
+                    </buttonLockup>
+                    {{#partiallyWatched}}
+                    <buttonLockup onSelect="Presenter.loadContextWithData('TVShow_SeasonListContext', { watched: false, path: '{{ path }}', item: 'show', pmsId: '{{ _.pmsId }}' })">
+                        <badge src="resource://button-checkmark" />
+                        <title>Mark as unwatched</title>
+                    </buttonLockup>
+                    {{/partiallyWatched}}
 				</row>
 			</stack>
-			<heroImg src="{{ thumb }}" />
+			<heroImg src="{{ thumb.768 }}" />
 		</banner>
 		<shelf>
 			<header>
 				<title>Seasons</title>
 			</header>
-			<section>
+			<section id="seasons">
 				{{# seasons }}
-				<lockup onSelect="Presenter.load('TVShow_EpisodeList', '{{ _.pmsId }}', '{{ key }}')">
-					<img src="{{ thumb }}" width="226" height="226" />
+				<lockup onSelect="Presenter.load('TVShow_EpisodeList', '{{ _.pmsId }}', '{{ key }}')" id="season{{index}}"
+                        onHoldSelect="Presenter.loadContextWithData('TVShow_SeasonListSeasonContext', { watched: {{#watched}}false{{/watched}}{{^watched}}true{{/watched}}, partiallyWatched: {{ partiallyWatched }}, path: '{{ path }}', parentPath: '{{ parentPath }}', pmsId: '{{ _.pmsId }}', id: 'season{{index}}' })">
+					<img src="{{ thumb.300 }}" width="226" height="226" />
 					{{^ watched}}
 					<overlay style="tv-align: right;">
 						<badge src="{{ _.imagePath }}/showRibbons/{{ unwatchedCount }}.png" style="tv-position: top-right" width="86" height="86" />
