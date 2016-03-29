@@ -91,6 +91,20 @@ public class BaseModel {
 		return dateFormatter.stringFromDate(date!)
 	}
 	
+	func isHD(width: Int, height: Int, aspectRatio: Double) -> Bool {
+		var isHD = false
+		
+		if height >= 720 && aspectRatio >= 1 {
+			isHD = true
+		}
+		
+		if width >= 720 && aspectRatio <= 1 {
+			isHD = true
+		}
+		
+		return isHD
+	}
+	
     // TODO: Error callback
     func __GET(url: String, success: (JSON) -> Void){
         let headers = ["Accept": "application/json"]

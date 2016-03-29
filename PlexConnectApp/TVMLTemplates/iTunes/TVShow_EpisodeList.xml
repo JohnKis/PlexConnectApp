@@ -17,7 +17,9 @@ See LICENSE.txt for this sample’s licensing information
 					<text>{{ parentGenre }}</text>
 					<text>{{ episodes.first.year }}</text>
 					<badge src="resource://{{ contentRating }}" class="badge" style="tv-tint-color: rgb(255,255,255)" />
-					<badge src="resource://hd" class="badge" style="tv-tint-color: rgb(255,255,255)" />
+					{{# HD}}
+                    <badge src="resource://hd" class="badge" style="tv-tint-color: rgb(255,255,255)" />
+                    {{/ HD}}
 				</row>
 				<description allowsZooming="true" moreLabel="more" onSelect="Presenter.loadContextWithData('TVShow_SeasonListDescription', { title: '{{ HTMLEscape(parentTitle) }}, {{ HTMLEscape(title) }}', description: '{{ HTMLEscape(summary) }}'})"><![CDATA[{{ summary }}]]></description>
 				<!-- TODO -->
@@ -71,6 +73,10 @@ See LICENSE.txt for this sample’s licensing information
 		                            <text>Episode {{ index }}</text>
 		                            <text>{{# duration.hours }}{{duration.hours}} hour {{/ duration.hours}}{{# duration.minutes }}{{duration.minutes}} min{{/ duration.minutes}}</text>
 		                            <badge src="resource://{{ contentRating }}" class="badge" style="tv-tint-color: rgb(255,255,255)" />
+		                            {{# HD}}
+		                            <badge src="resource://hd" class="badge" style="tv-tint-color: rgb(255,255,255)" />
+		                            {{/ HD}}
+		                            <badge src="resource://cc" class="badge" style="tv-tint-color: rgb(255,255,255)" />
 		                        </row>
                             </info>
                             <info>

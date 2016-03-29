@@ -41,8 +41,9 @@ class SeasonModel: BaseModel {
                 default:
                     self.transformed[key] = value.rawValue
             }
-            
         }
+		
+		self.transformed["HD"] = true
         
         if json["leafCount"].int != nil &&  json["viewedLeafCount"].int != nil {
             self.transformed["watched"] = (json["leafCount"].int! == json["viewedLeafCount"].int!) as Bool
@@ -71,6 +72,11 @@ class SeasonModel: BaseModel {
 				
 				// TODO
 				episode.transform(self.children!["_children"][index])
+				
+				if !episode.transformed["HD"]!.boolValue {
+					self.transformed["HD"] = false
+				}
+				
 				episodes.append(episode.transformed)
 			}
 			
