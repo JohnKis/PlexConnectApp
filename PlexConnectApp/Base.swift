@@ -82,6 +82,15 @@ public class BaseModel {
 		return duration
 	}
 	
+	func formatDate(dateString: String) -> String {
+		let dateFormatter = NSDateFormatter()
+		dateFormatter.dateFormat = "yyyy-MM-dd"
+		let date = dateFormatter.dateFromString(dateString)
+		dateFormatter.dateStyle = .MediumStyle
+		
+		return dateFormatter.stringFromDate(date!)
+	}
+	
     // TODO: Error callback
     func __GET(url: String, success: (JSON) -> Void){
         let headers = ["Accept": "application/json"]

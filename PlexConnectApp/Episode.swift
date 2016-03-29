@@ -10,7 +10,7 @@ import Foundation
 import SwiftyJSON
 
 class EpisodeModel: BaseModel {
-    let usedKeys = ["key", "ratingKey", "parentRatingKey", "title", "summary", "thumb", "index", "duration"]
+    let usedKeys = ["key", "ratingKey", "parentRatingKey", "title", "summary", "thumb", "index", "year", "duration", "originallyAvailableAt"]
     var sourceJson : JSON?
     
     override func _transform(var json: JSON){
@@ -36,6 +36,8 @@ class EpisodeModel: BaseModel {
                     self.transformed[key] = self.getThumbUrls(value.stringValue)
 				case "duration":
 					self.transformed[key] = self.getDurationFromTimestamp(value.intValue)
+				case "originallyAvailableAt":
+					self.transformed["releaseDate"] = self.formatDate(value.stringValue)
                 default:
                     self.transformed[key] = value.rawValue
             }

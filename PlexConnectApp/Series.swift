@@ -90,6 +90,7 @@ class SeriesModel: BaseModel {
                 let season = ModelRegister.sharedInstance.createModel("season", path: "/library/metadata/" + self.children!["_children"][index]["ratingKey"].stringValue, pmsId: self.pmsId!)
 				
 				self.children!["_children"][index]["parentTitle"].string = self.transformed["title"] as? String
+				self.children!["_children"][index]["parentGenre"].string = self.transformed["genre"] as? String
 				
                 // TODO
                 season.transform(self.children!["_children"][index])

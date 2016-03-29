@@ -10,7 +10,7 @@ import Foundation
 import SwiftyJSON
 
 class SeasonModel: BaseModel {
-    let usedKeys = ["key", "ratingKey", "parentRatingKey", "title", "parentTitle", "summary", "thumb", "index", "leafCount"]
+    let usedKeys = ["key", "ratingKey", "parentRatingKey", "title", "parentTitle", "parentGenre", "summary", "thumb", "index", "leafCount"]
     var sourceJson : JSON?
     
     override func _transform(var json: JSON){

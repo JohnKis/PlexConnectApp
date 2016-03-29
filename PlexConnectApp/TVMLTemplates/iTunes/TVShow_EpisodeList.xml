@@ -14,8 +14,8 @@ See LICENSE.txt for this sample’s licensing information
 					<subtitle>{{ title }}</subtitle>
 				</row>
 				<row>
-					<text>Drama</text>
-					<text>2015</text>
+					<text>{{ parentGenre }}</text>
+					<text>{{ episodes.first.year }}</text>
 					<badge src="resource://{{ contentRating }}" class="badge" style="tv-tint-color: rgb(255,255,255)" />
 					<badge src="resource://hd" class="badge" style="tv-tint-color: rgb(255,255,255)" />
 				</row>
@@ -64,12 +64,22 @@ See LICENSE.txt for this sample’s licensing information
                                 <title>{{ title }}</title>
                             </header>
                             <info>
+                            	<header>
+	                            	<title/>
+	                            </header>
+                            	<row>
+		                            <text>Episode {{ index }}</text>
+		                            <text>{{# duration.hours }}{{duration.hours}} hour {{/ duration.hours}}{{# duration.minutes }}{{duration.minutes}} min{{/ duration.minutes}}</text>
+		                            <badge src="resource://{{ contentRating }}" class="badge" style="tv-tint-color: rgb(255,255,255)" />
+		                        </row>
+                            </info>
+                            <info>
                                 <header>
-                                    <title>asdfasd</title>
-                                    <text>Something</text>
+                                    <title>{{ releaseDate }}
+                                    	{{ parentGenre }}
+                                    </title>
                                 </header>
-                                <text>Episode {{ index }} {{# duration.hours }} {{duration.hours}} hour {{/ duration.hours}} {{# duration.minutes }} {{duration.minutes}} min {{/ duration.minutes}}</text>
-                                <description>{{ summary }}</description>
+                                <description allowsZooming="true" moreLabel="more" onSelect="Presenter.loadContextWithData('TVShow_SeasonListDescription', { title: '{{ HTMLEscape(title) }}', description: '{{ HTMLEscape(summary) }}'})"><![CDATA[{{ summary }}]]></description>
                             </info>
                         </infoTable>
                     </relatedContent>
