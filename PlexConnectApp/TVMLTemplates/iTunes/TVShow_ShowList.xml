@@ -4,31 +4,28 @@ Copyright (C) 2015 Baa. All rights reserved.
 See LICENSE.txt for this sample’s licensing information
 -->
 <document>
-  <listTemplate>
-    <banner>
-        <title>{{ title }}</title>
-    </banner>
-    <list>
-      
-      <section>
-        {{# shows }}
-        <listItemLockup
-            onSelect="Presenter.load('TVShow_SeasonList', '{{ _.pmsId }}', '/library/metadata/{{ id }}', '{{ title }}', true)"
-            onSelectHold="modal"
-            >
-            <title>{{ title }}</title>
-          <relatedContent>
-            <lockup>
-              <img src="{{ thumb.768 }}" />
-              <title>{{ title }}</title>
-              <description>{{ summary }}</description>
-            </lockup>
-          </relatedContent>
-
-        </listItemLockup>
-        {{/ shows }}
-      </section>
-      
-    </list>
-  </listTemplate>
+	<stackTemplate>
+		<banner>
+			<title>
+				<![CDATA[{{ title }}]]>
+			</title>
+		</banner>
+		<collectionList>
+			<grid>
+				<section>
+					{{# shows }}
+					<lockup onSelect="Presenter.load('TVShow_SeasonList', '{{ _.pmsId }}', '/library/metadata/{{ id }}', '{{ title }}', true)" onSelectHold="modal">
+						{{^ watched}}
+						<img src="{{ thumb.445 }}" width="250" height="375" />
+						<overlay style="tv-align: right; padding: 0;">
+							<badge src="{{ _.imagePath }}/showRibbons/{{ unwatchedCount }}.png" style="tv-position: top-right;" width="86" height="86" />
+						</overlay>
+						{{/ watched}}
+						<title><![CDATA[{{ title }}]]></title>
+					</lockup>
+					{{/ shows }}
+				</section>
+			</grid>
+		</collectionList>
+	</stackTemplate>
 </document>

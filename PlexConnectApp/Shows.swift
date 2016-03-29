@@ -14,7 +14,7 @@ class ShowsModel: BaseModel {
     var sourceJson : JSON?
     var shows : [AnyObject] = []
     
-    override func transform(var json: JSON){
+	override func _transform(var json: JSON){
         for (key,value) in json {
             // Continue if we're not interested in the key
             if self.usedKeys.indexOf(key) == nil{

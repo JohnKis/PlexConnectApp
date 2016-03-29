@@ -10,10 +10,12 @@ import Foundation
 import SwiftyJSON
 
 class SeasonModel: BaseModel {
-    let usedKeys = ["key", "ratingKey", "title", "summary", "thumb", "index", "parentKey", "index"]
+    let usedKeys = ["key", "ratingKey", "parentRatingKey", "title", "parentTitle", "summary", "thumb", "index", "leafCount"]
     var sourceJson : JSON?
     
-    override func transform(var json: JSON){
+    override func _transform(var json: JSON){
+		 var episodes : [AnyObject] = []
+		
         // Set up completetion handler
         for (key,value) in json {
             // Continue if we're not interested in the key
@@ -29,11 +31,13 @@ class SeasonModel: BaseModel {
                 case "key":
                     self.transformed["childPath"] = value.string
                     break
-                case "parentKey":
+                case "parentRatingKey":
                     self.transformed["parentPath"] = value.string
                     break
                 case "thumb":
                     self.transformed[key] = self.getThumbUrls(value.stringValue)
+				case "grandparentContentRating":
+					self.transformed["contentRating"] = value.stringValue.lowercaseString
                 default:
                     self.transformed[key] = value.rawValue
             }
@@ -55,5 +59,53 @@ class SeasonModel: BaseModel {
                 self.transformed["unwatchedCount"] = "99+"
             }
         }
-    }	
+		
+		if self.children != nil {
+			
+			if self.children!["grandparentContentRating"] != nil {
+				self.transformed["contentRating"] = self.children!["grandparentContentRating"].stringValue.lowercaseString
+			}
+			
+			for (index,_) in self.children!["_children"].array!.enumerate() {
+				let episode = ModelRegister.sharedInstance.createModel("episode", path: "/library/metadata/" + self.children!["_children"][index]["ratingKey"].stringValue, pmsId: self.pmsId!)
+				
+				// TODO
+				episode.transform(self.children!["_children"][index])
+				episodes.append(episode.transformed)
+			}
+			
+			// Append seasons and next episode info
+			if episodes.count > 0 {
+				self.transformed["episodes"] = episodes
+			}
+		}
+		
+		print("Season: \(self.transformed)")
+    }
+	
+	override func fetch(completion: (JSON) -> Void) {
+		print("Fetching season: \(self.key!)")
+		self.__GET(getPmsUrl("", pmsId: self.pmsId!, pmsPath: self.key!),
+		           success: { json in
+					let done = {
+						self.transform(json["_children"][0])
+						
+						completion(JSON(self.transformed))
+					}
+					
+					if json["_children"][0]["key"].string != nil {
+						// Fetch children
+						self.__GET(getPmsUrl("", pmsId: self.pmsId!, pmsPath: json["_children"][0]["key"].stringValue),
+							success: { json in
+								self.children = json
+								done()
+							}
+						)
+					} else {
+						done()
+					}
+					
+			}
+		)
+	}
 }

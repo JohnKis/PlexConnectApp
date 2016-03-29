@@ -20,13 +20,14 @@
 		01CE209A1BE6AF9200A2F10A /* XMLConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01CE20941BE6AF9200A2F10A /* XMLConverter.swift */; };
 		01CE20A21BE6AFE700A2F10A /* SWXMLHash.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01CE20A11BE6AFE700A2F10A /* SWXMLHash.swift */; };
 		01F0E79E1C133B0F00AE6D42 /* TVMLTemplates in Resources */ = {isa = PBXBuildFile; fileRef = 01F0E79D1C133B0F00AE6D42 /* TVMLTemplates */; };
-		5B974F7F77D75FF61E622104 /* Pods_PlexConnectApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAD758B5D1DDF3CF725E6215 /* Pods_PlexConnectApp.framework */; };
 		6132D7451C84CDD800A37F4E /* JSONConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6132D7441C84CDD800A37F4E /* JSONConverter.swift */; };
+		61502ABF1CA1850D00FECCF3 /* Episode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61502ABE1CA1850D00FECCF3 /* Episode.swift */; };
 		61746D2F1C95C06F007AD688 /* ModelRegister.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61746D2E1C95C06F007AD688 /* ModelRegister.swift */; };
 		61746D311C95C451007AD688 /* Season.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61746D301C95C451007AD688 /* Season.swift */; };
 		61B134491C8EC6B80081BA07 /* Base.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61B134481C8EC6B80081BA07 /* Base.swift */; };
 		61B1344B1C8EC75C0081BA07 /* Series.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61B1344A1C8EC75C0081BA07 /* Series.swift */; };
 		61F6C67E1C995514002C655D /* Shows.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61F6C67D1C995514002C655D /* Shows.swift */; };
+		645FA2BDC6426850A1335D8B /* Pods_PlexConnectApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6117BD706BDE297A6B96C266 /* Pods_PlexConnectApp.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,15 +47,16 @@
 		01CE20A01BE6AFE700A2F10A /* SWXMLHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SWXMLHash.h; path = PlexConnectApp/lib_SWXMLHash/SWXMLHash.h; sourceTree = "<group>"; };
 		01CE20A11BE6AFE700A2F10A /* SWXMLHash.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SWXMLHash.swift; path = PlexConnectApp/lib_SWXMLHash/SWXMLHash.swift; sourceTree = "<group>"; };
 		01F0E79D1C133B0F00AE6D42 /* TVMLTemplates */ = {isa = PBXFileReference; lastKnownFileType = folder; name = TVMLTemplates; path = PlexConnectApp/TVMLTemplates; sourceTree = "<group>"; };
-		4C6AD9D82DD62837132EB0CF /* Pods-PlexConnectApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PlexConnectApp.release.xcconfig"; path = "Pods/Target Support Files/Pods-PlexConnectApp/Pods-PlexConnectApp.release.xcconfig"; sourceTree = "<group>"; };
-		60A5D855A8ECF6B323DD9741 /* Pods-PlexConnectApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PlexConnectApp.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PlexConnectApp/Pods-PlexConnectApp.debug.xcconfig"; sourceTree = "<group>"; };
+		6117BD706BDE297A6B96C266 /* Pods_PlexConnectApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PlexConnectApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6132D7441C84CDD800A37F4E /* JSONConverter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONConverter.swift; sourceTree = "<group>"; };
+		61502ABE1CA1850D00FECCF3 /* Episode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Episode.swift; sourceTree = "<group>"; };
 		61746D2E1C95C06F007AD688 /* ModelRegister.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelRegister.swift; sourceTree = "<group>"; };
 		61746D301C95C451007AD688 /* Season.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Season.swift; sourceTree = "<group>"; };
 		61B134481C8EC6B80081BA07 /* Base.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Base.swift; sourceTree = "<group>"; };
 		61B1344A1C8EC75C0081BA07 /* Series.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Series.swift; sourceTree = "<group>"; };
 		61F6C67D1C995514002C655D /* Shows.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Shows.swift; sourceTree = "<group>"; };
-		CAD758B5D1DDF3CF725E6215 /* Pods_PlexConnectApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PlexConnectApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F541C2D4311A9A9FC6BE970B /* Pods-PlexConnectApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PlexConnectApp.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PlexConnectApp/Pods-PlexConnectApp.debug.xcconfig"; sourceTree = "<group>"; };
+		F6727A9B32C97C943060A505 /* Pods-PlexConnectApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PlexConnectApp.release.xcconfig"; path = "Pods/Target Support Files/Pods-PlexConnectApp/Pods-PlexConnectApp.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,7 +64,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5B974F7F77D75FF61E622104 /* Pods_PlexConnectApp.framework in Frameworks */,
+				645FA2BDC6426850A1335D8B /* Pods_PlexConnectApp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,8 +80,8 @@
 				01CE20A31BE6AFEC00A2F10A /* lib_SWXMLHash */,
 				016BE1691BF525BB00EA6126 /* js */,
 				01F0E79D1C133B0F00AE6D42 /* TVMLTemplates */,
-				507046BD97E4E26D5843C30D /* Pods */,
-				278219CFB93FC5E28814666D /* Frameworks */,
+				2EFD51641BAC625E8B324FE3 /* Pods */,
+				BC115CA268416545E0066A4C /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -119,19 +121,11 @@
 			name = lib_SWXMLHash;
 			sourceTree = "<group>";
 		};
-		278219CFB93FC5E28814666D /* Frameworks */ = {
+		2EFD51641BAC625E8B324FE3 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				CAD758B5D1DDF3CF725E6215 /* Pods_PlexConnectApp.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		507046BD97E4E26D5843C30D /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				60A5D855A8ECF6B323DD9741 /* Pods-PlexConnectApp.debug.xcconfig */,
-				4C6AD9D82DD62837132EB0CF /* Pods-PlexConnectApp.release.xcconfig */,
+				F541C2D4311A9A9FC6BE970B /* Pods-PlexConnectApp.debug.xcconfig */,
+				F6727A9B32C97C943060A505 /* Pods-PlexConnectApp.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -143,9 +137,18 @@
 				61F6C67D1C995514002C655D /* Shows.swift */,
 				61B1344A1C8EC75C0081BA07 /* Series.swift */,
 				61746D301C95C451007AD688 /* Season.swift */,
+				61502ABE1CA1850D00FECCF3 /* Episode.swift */,
 				61746D2E1C95C06F007AD688 /* ModelRegister.swift */,
 			);
 			name = Models;
+			sourceTree = "<group>";
+		};
+		BC115CA268416545E0066A4C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				6117BD706BDE297A6B96C266 /* Pods_PlexConnectApp.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -155,12 +158,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 01CE20771BE6ADD500A2F10A /* Build configuration list for PBXNativeTarget "PlexConnectApp" */;
 			buildPhases = (
-				8245AF4DC565B7B7DC8A2D72 /* Check Pods Manifest.lock */,
+				B379D39E7D535CA91BCCB73F /* Check Pods Manifest.lock */,
 				01CE20621BE6ADD500A2F10A /* Sources */,
 				01CE20631BE6ADD500A2F10A /* Frameworks */,
 				01CE20641BE6ADD500A2F10A /* Resources */,
-				CA3906C4940913E0134941C5 /* Embed Pods Frameworks */,
-				6AEC5BEF8C5010940C447DD3 /* Copy Pods Resources */,
+				D302262732ED7AD2762E55DE /* Embed Pods Frameworks */,
+				72BC51AAFD30AA27868AB327 /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -220,7 +223,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		6AEC5BEF8C5010940C447DD3 /* Copy Pods Resources */ = {
+		72BC51AAFD30AA27868AB327 /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -235,7 +238,7 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PlexConnectApp/Pods-PlexConnectApp-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		8245AF4DC565B7B7DC8A2D72 /* Check Pods Manifest.lock */ = {
+		B379D39E7D535CA91BCCB73F /* Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -250,7 +253,7 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		CA3906C4940913E0134941C5 /* Embed Pods Frameworks */ = {
+		D302262732ED7AD2762E55DE /* Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -285,6 +288,7 @@
 				61746D2F1C95C06F007AD688 /* ModelRegister.swift in Sources */,
 				61B1344B1C8EC75C0081BA07 /* Series.swift in Sources */,
 				016BE1651BF51E5200EA6126 /* JsInterface.swift in Sources */,
+				61502ABF1CA1850D00FECCF3 /* Episode.swift in Sources */,
 				01CE20A21BE6AFE700A2F10A /* SWXMLHash.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -386,7 +390,7 @@
 		};
 		01CE20781BE6ADD500A2F10A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 60A5D855A8ECF6B323DD9741 /* Pods-PlexConnectApp.debug.xcconfig */;
+			baseConfigurationReference = F541C2D4311A9A9FC6BE970B /* Pods-PlexConnectApp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -402,7 +406,7 @@
 		};
 		01CE20791BE6ADD500A2F10A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4C6AD9D82DD62837132EB0CF /* Pods-PlexConnectApp.release.xcconfig */;
+			baseConfigurationReference = F6727A9B32C97C943060A505 /* Pods-PlexConnectApp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;

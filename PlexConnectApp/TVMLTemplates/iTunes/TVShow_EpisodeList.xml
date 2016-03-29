@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+Copyright (C) 2015 Baa. All rights reserved.
+See LICENSE.txt for this sample’s licensing information
+-->
+<document>
+	<productBundleTemplate>
+		<background>
+		</background>
+		<banner>
+			<stack>
+				<title>{{ parentTitle }}</title>
+				<row>
+					<subtitle>{{ title }}</subtitle>
+				</row>
+				<row>
+					<text>Drama</text>
+					<text>2015</text>
+					<badge src="resource://{{ contentRating }}" class="badge" style="tv-tint-color: rgb(255,255,255)" />
+					<badge src="resource://hd" class="badge" style="tv-tint-color: rgb(255,255,255)" />
+				</row>
+				<description allowsZooming="true" moreLabel="more" onSelect="Presenter.loadContextWithData('TVShow_SeasonListDescription', { title: '{{ HTMLEscape(parentTitle) }}, {{ HTMLEscape(title) }}', description: '{{ HTMLEscape(summary) }}'})"><![CDATA[{{ summary }}]]></description>
+				<!-- TODO -->
+				<row id="controls">
+					<buttonLockup onSelect="videoPlayer.play('{{ _.pmsId }}', '{{ nextEpisode.key }}')">
+						<badge src="resource://button-play" />
+                        <title>Play {{ nextEpisode.description }}</title>
+					</buttonLockup>
+                    <buttonLockup onSelect="Presenter.loadContextWithData('TVShow_SeasonListContext', { watched: {{#watched}}false{{/watched}}{{^watched}}true{{/watched}}, path: '{{ path }}', title: '{{ title }}', pmsId: '{{ _.pmsId }}' })">
+                        <badge src="{{ _.imagePath }}/markas{{#watched}}un{{/watched}}watched.png" width="76" height="46" />
+                        <title>Mark as {{#watched}}un{{/watched}}watched</title>
+                    </buttonLockup>
+                    {{#partiallyWatched}}
+                    <buttonLockup onSelect="Presenter.loadContextWithData('TVShow_SeasonListContext', { watched: false, path: '{{ path }}', title: '{{ title }}}', pmsId: '{{ _.pmsId }}' })">
+                        <badge src="{{ _.imagePath }}/markasunwatched.png" width="76" height="46" />
+                        <title>Mark as unwatched</title>
+                    </buttonLockup>
+                    {{/partiallyWatched}}
+                    <buttonLockup onSelect="Presenter.loadContextWithData('TVShow_SeasonListContext', { watched: false, path: '{{ path }}', title: '{{ title }}}', pmsId: '{{ _.pmsId }}' })">
+                        <seasonBadge>5</seasonBadge>
+                        <title>Series</title>
+                    </buttonLockup>
+				</row>
+			</stack>
+			<heroImg src="{{ thumb.768 }}" />
+		</banner>
+		<shelf>
+			<header>
+				<title>{{ leafCount }} episodes</title>
+			</header>
+			<section id="seasons">
+				{{# episodes }}
+				<lockup onSelect="Presenter.load('TVShow_EpisodeList', '{{ _.pmsId }}', '{{ childPath }}')" id="season{{index}}" onHoldSelect="Presenter.loadContextWithData('TVShow_SeasonListSeasonContext', { watched: {{#watched}}false{{/watched}}{{^watched}}true{{/watched}}, partiallyWatched: {{ partiallyWatched }}, path: '{{ path }}', parentPath: '{{ parentPath }}', pmsId: '{{ _.pmsId }}', id: 'season{{index}}' })">
+					<img src="{{ thumb.video }}" width="308" height="173" />
+				   <!--  {{^ watched}}
+					<overlay style="tv-align: right;">
+						<badge src="{{ _.imagePath }}/showRibbons/{{ unwatchedCount }}.png" style="tv-position: top-right" width="86" height="86" />
+					</overlay>
+					{{/ watched}} -->
+					<title>{{ index }}. {{ title }}</title>
+					<relatedContent>
+                        <infoTable>
+                            <header>
+                                <title>{{ title }}</title>
+                            </header>
+                            <info>
+                                <header>
+                                    <title>asdfasd</title>
+                                    <text>Something</text>
+                                </header>
+                                <text>Episode {{ index }} {{# duration.hours }} {{duration.hours}} hour {{/ duration.hours}} {{# duration.minutes }} {{duration.minutes}} min {{/ duration.minutes}}</text>
+                                <description>{{ summary }}</description>
+                            </info>
+                        </infoTable>
+                    </relatedContent>
+				</lockup>
+				{{/ episodes }}
+			</section>
+		</shelf>
+	</productBundleTemplate>
+</document>

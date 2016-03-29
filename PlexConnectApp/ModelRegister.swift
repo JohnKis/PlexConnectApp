@@ -32,6 +32,8 @@ public class ModelRegister {
                 break;
             case "season":
                 Model = SeasonModel(key: path, pmsId: pmsId)
+			case "episode":
+				Model = EpisodeModel(key: path, pmsId: pmsId)
                 break;
             default:
                 break;

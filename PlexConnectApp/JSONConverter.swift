@@ -61,6 +61,9 @@ class cJSONConverter {
         case "TVShow_SeasonList":
             modelType = "series"
             break
+		case "TVShow_EpisodeList":
+			modelType = "season"
+			break
         default:
             // TODO: Exception
             break

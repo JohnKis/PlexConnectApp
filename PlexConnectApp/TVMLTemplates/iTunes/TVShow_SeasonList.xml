@@ -1,6 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+Copyright (C) 2015 Baa. All rights reserved.
+See LICENSE.txt for this sample’s licensing information
+-->
+
 <document>
 	<productTemplate>
 		<background>
+			<!-- <img src="{{ art }}" /> -->
 		</background>
 		<banner>
 			<infoList>
@@ -8,19 +15,19 @@
 					<header>
 						<title>Studio</title>
 					</header>
-					<text>{{ studio }}</text>
+					<text><![CDATA[{{ studio }}]]></text>
 				</info>
 				<info>
 					<header>
 						<title>Cast</title>
 					</header>
 					{{# cast }}
-					<text>{{ tag }}</text>
+					<text><![CDATA[{{ tag }}]]></text>
 					{{/ cast  }}
 				</info>
 			</infoList>
 			<stack>
-				<title id="show_title">{{ title }}{{^watched}} <badge src="{{ _.imagePath }}/dot.png" class="badge" style="tv-tint-color: rgb(0,122,255);" />{{/watched}}</title>
+				<title id="show_title"><![CDATA[{{ title }}]]>{{^watched}} <badge src="{{ _.imagePath }}/dot.png" class="badge" style="tv-tint-color: rgb(0,122,255);" />{{/watched}}</title>
 				<row>
 					<!--					<text><badge src="resource://tomato-fresh"/> 99%</text>-->
 					<!--					<text>1hr 54min</text>-->
@@ -29,19 +36,19 @@
 					<badge src="resource://{{ contentRating }}" class="badge" style="tv-tint-color: rgb(255,255,255)" />
 					<!--					<badge src="resource://cc" class="badge" />-->
 				</row>
-				<description allowsZooming="true" moreLabel="more" onSelect="Presenter.loadContextWithData('TVShow_SeasonListDescription', { title: '{{ HTMLEscape(title) }}', description: '{{ HTMLEscape(summary) }}'})">{{ summary }}</description>
+				<description allowsZooming="true" moreLabel="more" onSelect="Presenter.loadContextWithData('TVShow_SeasonListDescription', { title: '{{ HTMLEscape(title) }}', description: '{{ HTMLEscape(summary) }}'})"><![CDATA[{{ summary }}]]></description>
 				<row id="controls">
 					<buttonLockup onSelect="videoPlayer.play('{{ _.pmsId }}', '{{ nextEpisode.key }}')">
 						<badge src="resource://button-play" />
                         <title>Play {{ nextEpisode.description }}</title>
 					</buttonLockup>
-                    <buttonLockup onSelect="Presenter.loadContextWithData('TVShow_SeasonListContext', { watched: {{#watched}}false{{/watched}}{{^watched}}true{{/watched}}, path: '{{ path }}', item: 'show', pmsId: '{{ _.pmsId }}' })">
-                        <badge src="resource://button-checkmark" />
+                    <buttonLockup onSelect="Presenter.loadContextWithData('TVShow_SeasonListContext', { watched: {{#watched}}false{{/watched}}{{^watched}}true{{/watched}}, path: '{{ path }}', title: '{{ title }}', pmsId: '{{ _.pmsId }}' })">
+                        <badge src="{{ _.imagePath }}/markas{{#watched}}un{{/watched}}watched.png" width="76" height="46" />
                         <title>Mark as {{#watched}}un{{/watched}}watched</title>
                     </buttonLockup>
                     {{#partiallyWatched}}
-                    <buttonLockup onSelect="Presenter.loadContextWithData('TVShow_SeasonListContext', { watched: false, path: '{{ path }}', item: 'show', pmsId: '{{ _.pmsId }}' })">
-                        <badge src="resource://button-checkmark" />
+                    <buttonLockup onSelect="Presenter.loadContextWithData('TVShow_SeasonListContext', { watched: false, path: '{{ path }}', title: '{{ title }}}', pmsId: '{{ _.pmsId }}' })">
+                        <badge src="{{ _.imagePath }}/markasunwatched.png" width="76" height="46" />
                         <title>Mark as unwatched</title>
                     </buttonLockup>
                     {{/partiallyWatched}}
@@ -51,11 +58,11 @@
 		</banner>
 		<shelf>
 			<header>
-				<title>Seasons</title>
+				<title style="">Seasons</title>
 			</header>
 			<section id="seasons">
 				{{# seasons }}
-				<lockup onSelect="Presenter.load('TVShow_EpisodeList', '{{ _.pmsId }}', '{{ key }}')" id="season{{index}}"
+				<lockup onSelect="Presenter.load('TVShow_EpisodeList', '{{ _.pmsId }}', '{{ path }}', '{{ parentTitle }}, {{ title }}', true)" id="season{{index}}"
                         onHoldSelect="Presenter.loadContextWithData('TVShow_SeasonListSeasonContext', { watched: {{#watched}}false{{/watched}}{{^watched}}true{{/watched}}, partiallyWatched: {{ partiallyWatched }}, path: '{{ path }}', parentPath: '{{ parentPath }}', pmsId: '{{ _.pmsId }}', id: 'season{{index}}' })">
 					<img src="{{ thumb.300 }}" width="226" height="226" />
 					{{^ watched}}

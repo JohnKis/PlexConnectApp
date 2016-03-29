@@ -9,6 +9,7 @@
 import Foundation
 import Alamofire
 import SwiftyJSON
+import CoreMedia
 
 public class BaseModel {
     var key : String?
@@ -55,20 +56,32 @@ public class BaseModel {
         return helpers
     }
     
-    func getThumbUrls(var thumb: String) -> [String: AnyObject] {
+    func getThumbUrls(thumb: String) -> [String: AnyObject] {
         var thumbs : [String: AnyObject] = [:]
         
-        thumb = getPmsUrl("", pmsId: self.pmsId!, pmsPath: thumb)
+        let thumb = getPmsUrl("", pmsId: self.pmsId!, pmsPath: thumb)
         
         let escaped = thumb.stringByAddingPercentEncodingWithAllowedCharacters(.alphanumericCharacterSet())!
         
         thumbs["300"] = getPmsUrl("", pmsId: self.pmsId!, pmsPath: "/photo/:/transcode?url=\(escaped)&width=300&height=300")
+		thumbs["445"] = getPmsUrl("", pmsId: self.pmsId!, pmsPath: "/photo/:/transcode?url=\(escaped)&width=445&height=445")
         thumbs["768"] = getPmsUrl("", pmsId: self.pmsId!, pmsPath: "/photo/:/transcode?url=\(escaped)&width=768&height=768")
+		thumbs["video"] = getPmsUrl("", pmsId: self.pmsId!, pmsPath: "/photo/:/transcode?url=\(escaped)&width=308&height=173")
         thumbs["original"] = thumb
         
         return thumbs
     }
-    
+	
+	func getDurationFromTimestamp(timestamp: Int) -> Dictionary<String, Int>{
+		let seconds = timestamp / 1000
+		var duration = [String: Int]()
+		
+		duration["hours"] = (seconds / 3600)
+		duration["minutes"] = (seconds % 3600) / 60
+		
+		return duration
+	}
+	
     // TODO: Error callback
     func __GET(url: String, success: (JSON) -> Void){
         let headers = ["Accept": "application/json"]
@@ -123,6 +136,12 @@ public class BaseModel {
     }
 
     func transform(json: JSON){
-        
+        self._transform(json)
+		
+		self.transformed["_"] = self.globalHelpers()
     }
+	
+	func _transform(json: JSON){
+		
+	}
 }
