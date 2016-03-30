@@ -127,6 +127,8 @@ class cJsInterface: NSObject, jsInterfaceProtocol {
     func setWatchedStatus(id: String, path: String, watched: Bool, completion: JSValue) {
         let completionWrapper = JSContext.currentContext().objectForKeyedSubscript("setTimeout")
 
+        print("Marking \(path) as \(watched ? "watched" : "unwatched")")
+        
         if let Model = ModelRegister.sharedInstance.getModel(path, pmsId: id){
             Model.setWatchedStatus(watched, completion: {
                 completionWrapper.callWithArguments([completion, 0])

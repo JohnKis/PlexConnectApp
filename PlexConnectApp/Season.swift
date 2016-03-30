@@ -10,7 +10,7 @@ import Foundation
 import SwiftyJSON
 
 class SeasonModel: BaseModel {
-    let usedKeys = ["key", "ratingKey", "parentRatingKey", "title", "parentTitle", "parentGenre", "summary", "thumb", "index", "leafCount"]
+    let usedKeys = ["key", "ratingKey", "parentKey", "title", "parentTitle", "parentGenre", "summary", "thumb", "index", "leafCount"]
     var sourceJson : JSON?
     
     override func _transform(var json: JSON){
@@ -31,7 +31,7 @@ class SeasonModel: BaseModel {
                 case "key":
                     self.transformed["childPath"] = value.string
                     break
-                case "parentRatingKey":
+                case "parentKey":
                     self.transformed["parentPath"] = value.string
                     break
                 case "thumb":

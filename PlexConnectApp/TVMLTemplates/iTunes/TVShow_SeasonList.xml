@@ -36,7 +36,7 @@ See LICENSE.txt for this sample’s licensing information
 					<badge src="resource://{{ contentRating }}" class="badge" style="tv-tint-color: rgb(255,255,255)" />
 					<!--					<badge src="resource://cc" class="badge" />-->
 				</row>
-				<description allowsZooming="true" moreLabel="more" onSelect="Presenter.loadContextWithData('TVShow_SeasonListDescription', { title: '{{ HTMLEscape(title) }}', description: '{{ HTMLEscape(summary) }}'})"><![CDATA[{{ summary }}]]></description>
+				<description allowsZooming="true" moreLabel="more" onSelect="Presenter.loadContextWithData('TVShow_SeasonListDescription', { title: '{{ HTMLEscape(title) }}', description: '{{ HTMLEscape(summary) }}'})"><![CDATA[{{{ summary }}}]]></description>
 				<row id="controls">
 					<buttonLockup onSelect="videoPlayer.play('{{ _.pmsId }}', '{{ nextEpisode.key }}')">
 						<badge src="resource://button-play" />
