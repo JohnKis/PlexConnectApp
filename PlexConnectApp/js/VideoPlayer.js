@@ -78,6 +78,8 @@ play: function(pmsId, pmsPath) {
       mediaItem.partIx = partIx
       mediaItem.indirect = part.getTextContent('indirect');
     
+        console.log(video.getTextContent('subtitle'))
+        
       mediaItem.title = video.getTextContent('title');
       mediaItem.subtitle = video.getTextContent('subtitle');  // todo: check subtitle for stacked video
       mediaItem.artworkImageURL = video.getTextContent('imageURL');

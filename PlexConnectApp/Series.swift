@@ -12,7 +12,7 @@ import SwiftyJSON
 class SeriesModel: BaseModel {
     let usedKeys = ["title", "contentRating", "thumb", "summary", "key", "ratingKey", "studio", "year", "art", "_children"]
     
-	override func _transform(var json: JSON){
+	override func _transform(json: JSON){
         // TODO: Optimise this
         var seasons : [AnyObject] = []
         var cast : [AnyObject] = []
@@ -164,31 +164,22 @@ class SeriesModel: BaseModel {
         }
         
         if firstUnwatchedSeason != nil {
-            self.__GET(getPmsUrl("", pmsId: self.pmsId!, pmsPath: firstUnwatchedSeason!["childPath"].stringValue), success: { json in
-                
-                for ep in json["_children"].array! {
-                    if ep["viewCount"] != nil {
-                        continue
-                    }
-					
-                    firstUnwatchedEpisode = ep
+            let season = ModelRegister.sharedInstance.getModel(firstUnwatchedSeason!["path"].stringValue, pmsId: self.pmsId!)
+            
+            if season != nil {
+                season!.fetch({ json in
+                    firstUnwatchedEpisode = JSON(season!.transformed["nextEpisode"]!)
+                    
+                    let episodeNumber : String = firstUnwatchedEpisode!["index"].intValue < 10 ? "0\(firstUnwatchedEpisode!["index"].stringValue)" : firstUnwatchedEpisode!["index"].stringValue
+                    
+                    episode["path"] = firstUnwatchedEpisode!["path"].stringValue
+                    episode["description"] = "\(firstUnwatchedSeason!["index"].stringValue)x\(episodeNumber)"
                     
                     
-                    break;
-                }
-                
-                if firstUnwatchedEpisode == nil {
-                    firstUnwatchedEpisode = json["_children"].array![0]
-                }
-                
-                let episodeNumber : String = firstUnwatchedEpisode!["index"].intValue < 10 ? "0\(firstUnwatchedEpisode!["index"].stringValue)" : firstUnwatchedEpisode!["index"].stringValue
-                
-                episode["key"] = firstUnwatchedEpisode!["key"].stringValue
-                episode["description"] = "\(firstUnwatchedSeason!["index"].stringValue)x\(episodeNumber)"
+                    completion(episode)
 
-                
-                completion(episode)
-            })
+                })
+            }
         }
     }
 }

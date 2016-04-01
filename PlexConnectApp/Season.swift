@@ -83,10 +83,33 @@ class SeasonModel: BaseModel {
 			// Append seasons and next episode info
 			if episodes.count > 0 {
 				self.transformed["episodes"] = episodes
+                
+                var firstUnwatchedEpisode:JSON?
+                var episode : [String: AnyObject] = [:]
+                
+                for ep in episodes {
+                    if ep["watched"] as! Bool == true {
+                        continue
+                    }
+                    
+                    firstUnwatchedEpisode = JSON(ep)
+                    
+                    
+                    break;
+                }
+                
+                if firstUnwatchedEpisode == nil {
+                    firstUnwatchedEpisode = JSON(episodes[0])
+                }
+                
+                episode["index"] = firstUnwatchedEpisode!["index"].stringValue
+                episode["path"] = firstUnwatchedEpisode!["path"].stringValue
+                episode["description"] = "Episode \(firstUnwatchedEpisode!["index"].stringValue)"
+                
+                self.transformed["nextEpisode"] = episode
 			}
 		}
 		
-		print("Season: \(self.transformed)")
     }
 	
 	override func fetch(completion: (JSON) -> Void) {

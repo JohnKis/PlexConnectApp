@@ -450,7 +450,7 @@ func getTranscodeVideoArgs(path: String, ratingKey: String, partIx: Int, transco
         NSURLQueryItem(name: "audioBoost", value: audio["boost"]!),
         NSURLQueryItem(name: "fastSeek", value: "1"),
         
-        NSURLQueryItem(name: "skipSubtitles", value: "1"),  // no PMS subtitles for now
+//        NSURLQueryItem(name: "skipSubtitles", value: "1"),  // no PMS subtitles for now
         
         /* todo: subtitle support
         args["subtitleSize"] = subtitle["size"]
