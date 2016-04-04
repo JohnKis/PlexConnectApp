@@ -9,7 +9,7 @@ See LICENSE.txt for this sample’s licensing information
 		</background>
 		<banner>
 			<stack>
-				<title>{{ parentTitle }}</title>
+				<title id="seasonTitle">{{ parentTitle }}</title>
 				<row>
 					<subtitle>{{ title }}</subtitle>
 				</row>
@@ -26,9 +26,9 @@ See LICENSE.txt for this sample’s licensing information
 				<row id="controls">
 					<buttonLockup onSelect="videoPlayer.play('{{ _.pmsId }}', '{{ nextEpisode.path }}')">
 						<badge src="resource://button-play" />
-                        <title>Play {{ nextEpisode.description }}</title>
+                        <title>{{ nextEpisode.description }}</title>
 					</buttonLockup>
-                    <buttonLockup onSelect="Presenter.loadContextWithData('TVShow_SeasonListContext', { watched: {{#watched}}false{{/watched}}{{^watched}}true{{/watched}}, path: '{{ path }}', title: '{{ title }}', pmsId: '{{ _.pmsId }}' })">
+                    <buttonLockup onSelect="Presenter.loadContextWithData('MarkAsWatchedContext', {view: '{{ view }}', showDescription: true, watched: !{{watched}}, path: '{{ path }}', title: '{{ HTMLEscape(parentTitle) }}, {{ HTMLEscape(title) }}', pmsId: '{{ _.pmsId }}', elements: '[\'seasonTitle\', \'controls\', \'episodes\']' })">
                         <badge src="{{ _.imagePath }}/markas{{#watched}}un{{/watched}}watched.png" width="76" height="46" />
                         <title>Mark as {{#watched}}un{{/watched}}watched</title>
                     </buttonLockup>
@@ -50,9 +50,9 @@ See LICENSE.txt for this sample’s licensing information
 			<header>
 				<title>{{ leafCount }} episodes</title>
 			</header>
-			<section id="seasons">
+			<section id="episodes">
 				{{# episodes }}
-				<lockup onSelect="videoPlayer.play('{{ _.pmsId }}', '{{ path }}')" id="episode{{index}}" onHoldSelect="Presenter.loadContextWithData('TVShow_SeasonListSeasonContext', { watched: {{#watched}}false{{/watched}}{{^watched}}true{{/watched}}, partiallyWatched: {{ partiallyWatched }}, path: '{{ path }}', parentPath: '{{ parentPath }}', pmsId: '{{ _.pmsId }}', id: 'season{{index}}' })">
+				<lockup id="episode{{index}}" onSelect="videoPlayer.play('{{ _.pmsId }}', '{{ path }}')" onHoldSelect="Presenter.loadContextWithData('TVShow_SeasonListSeasonContext', { watched: {{#watched}}false{{/watched}}{{^watched}}true{{/watched}}, partiallyWatched: {{ partiallyWatched }}, path: '{{ path }}', parentPath: '{{ parentPath }}', pmsId: '{{ _.pmsId }}', id: 'season{{index}}' })">
 					<img src="{{ thumb.video }}" width="308" height="173" />
 				    {{^ watched}}
 					<overlay style="tv-align: right;">

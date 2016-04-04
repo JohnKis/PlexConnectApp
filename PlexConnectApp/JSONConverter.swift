@@ -27,7 +27,12 @@ class cJSONConverter {
             do {
                 let template = try Template(string: templateStr);
                 template.registerInBaseContext("HTMLEscape", Box(StandardLibrary.HTMLEscape))
-                tvmlTemplate = try template.render(Box(json.object as? NSObject))
+				
+				var data = json
+				
+				data["view"].string = view
+				
+                tvmlTemplate = try template.render(Box(data.object as? NSObject))
             } catch _ {
                 print("Mustache parse error")
             }
@@ -43,6 +48,7 @@ class cJSONConverter {
         do {
             let template = try Template(string: templateStr);
             template.registerInBaseContext("HTMLEscape", Box(StandardLibrary.HTMLEscape))
+			
             tvmlTemplate = try template.render(Box(data as? NSObject))
         } catch _ {
             print("Mustache parse error")

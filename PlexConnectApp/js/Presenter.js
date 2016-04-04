@@ -238,6 +238,7 @@ var Presenter = {
 		if (elem) {
 			var id = elem.getAttribute("id");
 			var onSelect = elem.getAttribute("onSelect"); // get onSelect=...
+			console.log("onSelect callback: " + onSelect);
 			with(event) {
 				eval(onSelect);
 			}
