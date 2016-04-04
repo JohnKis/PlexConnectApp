@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- TODO: Implement this on TVShow_ShowList -->
+<!-- TODO: Make sure that it only fetches the current shows when marking as (un)watched -->
+
+<document>
+    <alertTemplate>
+        {{# showDescription }}
+        <title>Mark as {{^watched}}un{{/watched}}watched?</title>
+        <description>Are you sure that you'd like to mark all the episodes of {{ title }} as {{^watched}}un{{/watched}}watched?</description>
+        {{/ showDescription  }}
+        <button onSelect="Presenter.closeContext(); swiftInterface.setWatchedStatusPathWatchedCompletion('{{ pmsId }}', '{{ path }}', {{ watched }}, function(){
+                Presenter.swapElements('{{ view }}', '{{ pmsId }}', '{{ path }}', '', true, {{ elements }});
+            });">
+            <text>Mark as {{^watched}}un{{/watched}}watched</text>
+        </button>
+        {{# showDescription }}
+        <button onSelect="Presenter.closeContext();">
+            <text>Cancel</text>
+        </button>
+        {{/ showDescription  }}
+    </alertTemplate>
+</document>
+
